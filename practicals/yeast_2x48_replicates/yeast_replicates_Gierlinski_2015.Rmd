@@ -1,0 +1,139 @@
+---
+title: "Replicates, replicates, replicates, ..."
+author: "Jacques van Helden"
+date: '`r Sys.Date()`'
+output:
+  html_document:
+    fig_caption: yes
+    highlight: zenburn
+    theme: cerulean
+    toc: yes
+    toc_depth: 5
+  pdf_document:
+    fig_caption: yes
+    highlight: zenburn
+    toc: yes
+    toc_depth: 5
+---
+
+--------------------------------------------
+
+## Abbreviations
+
+
+| Abbrev | Description |
+|--------|-------------|
+| WT     | Wild-type   |
+| Snf2   | Catalytic subunit of the SWI/SNF chromatin remodeling complex; involved in transcriptional regulation (source: [SGD](http://www.yeastgenome.org/locus/snf2/overview)) |
+| SWI/SNF | **SWI**tch/**S**ucrose **N**on-**F**ermentable: nucleosome remodeling complex found in both eukaryotes and prokaryotes (source: [Wikipedia](https://en.wikipedia.org/wiki/SWI/SNF)) |
+
+--------------------------------------------
+
+## Introduction
+
+***How many replicates do I need*** ? This is the classical question everybody asks before starting an experiment aiming at detecting differentially expressed genes.
+
+
+
+--------------------------------------------
+
+## Data sources
+
+- [Raw counts in WT](http://figshare.com/articles/Wild_type_yeast_gene_read_counts_from_48_replicate_experiment/1425503)
+
+- [Raw counts in Snf2 mutant](http://figshare.com/articles/SNF2_knock_out_yeast_gene_read_counts_from_a_48_replicate_experiment/1425502)
+
+- [Metadata (sample descriptions)](http://figshare.com/articles/Metadata_for_a_highly_replicated_two_condition_yeast_RNAseq_experiment_/1416210)
+
+--------------------------------------------
+
+## Loading data tables
+
+```{r configuration}
+
+## Define the path to download the data (I will replace this by an URL on github)
+dir.data <- "~/Documents/enseignement/AVIESAN_ecole_bioinformatique/2015-09_Ecole_Bioinfo_AVIESAN_n4/stats_avec_RStudio_EBA15/data/yeast_48_replicates/"
+
+list.files(dir.data)
+```
+
+### Raw count table for the wild-type (WT)
+
+The function *read.table()* provides a flexible method to load data tables from text files with different formats. We can readily load a table indicating the raw counts for each yeast gene (row) in each replicate (column) of the WT. 
+
+```{r data_loading_WT}
+
+## Read the counts per gene in for the WT and Snf2 mutant, respectively
+counts.WT.raw <- read.table(file.path(dir.data, "WT_raw.tsv"), row.names = 1, sep="\t")
+head(counts.WT.raw) ## Display the first rows of the WT count table
+dim(counts.WT.raw) ## Check the size of the WT count table
+
+```
+
+
+## Metadata
+
+## Computing sample-wise (column-wise) statistics
+
+Each column of the row count table corresponds to one replicate. Before analyzing the data, we would like to compute some global statistics for each sample. For this, *R* provides a convenient function called **summary()**. 
+
+```{r summary, eval=TRUE, echo=TRUE}
+
+summary(counts.WT.raw)
+
+```
+
+
+------------------------------------------------------------
+
+## Exercise: Snf2 raw count table
+
+1. Load the Snf2 raw count table from the file *Snf2_raw.tsv*, located in the same folder as the WT count table.
+2. Count the number of genes and replicates.
+3. Compute some summary statistics for each gene of the Snf2 count table: mean, variance, standard deviation, min, median, third quartile, max.
+3; Compute the same summary statistics for each sample of the Snf2 count table.
+
+
+### Solution
+
+```{r data_loading_Snf2, eval=FALSE, echo=TRUE}
+
+## Loading the Snf2 raw count table
+counts.Snf2.raw <- read.table(file.path(dir.data, "Snf2_raw.tsv"), row.names = 1)
+head(counts.WT.raw) ## Display the first rows of the Snf2 count table
+dim(counts.WT.raw) ## Check the size of the Snf2 count table
+
+
+## Sample-wise statistics
+snf2.stats.per.sample <-  data.frame(
+  mean = apply(counts.Snf2.raw, 2, mean),
+  var = apply(counts.Snf2.raw, 2, var),
+  sd = apply(counts.Snf2.raw, 2, sd),
+  min = apply(counts.Snf2.raw, 2, min),
+  median = apply(counts.Snf2.raw, 2, median),
+  Q3 =  apply(counts.Snf2.raw, 2, quantile, 0.75),
+  max = apply(counts.Snf2.raw, 2, max)
+  )
+
+
+
+## Gene-wise statistics
+snf2.stats.per.gene <- data.frame(
+  mean = apply(counts.Snf2.raw, 1, mean),
+  var = apply(counts.Snf2.raw, 1, var),
+  sd = apply(counts.Snf2.raw, 1, sd),
+  min = apply(counts.Snf2.raw, 1, min),
+  median = apply(counts.Snf2.raw, 1, median),
+  Q3 =  apply(counts.Snf2.raw, 1, quantile, 0.75),
+  max = apply(counts.Snf2.raw, 1, max)
+  )
+
+
+```
+
+--------------------------------------------
+
+## Acknowledgement
+
+Thanks for Geoff Barton and Christian Cole for their instant answer to my Sundey night's, mail when I was searching for ready-to-use count tables for this course.
+
