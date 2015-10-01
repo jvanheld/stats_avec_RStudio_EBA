@@ -1,0 +1,38 @@
+---
+title: 'Practical: basic stats for peak calling'
+author: "Jacques van Helden"
+date: '`r Sys.Date()`'
+output: slidy_presentation
+---
+
+## Peak-calling: Carl's question
+
+<center>![peak-calling question](images/peak-calling_the_question.png)</center>
+
+
+## Defining the data directory
+
+Open a connection to the lab web browser. 
+
+We will first define the URL from which the data can be downloaded, by concatenating the URL fo the course with the path to our dataset.
+
+To concatenate paths, it is *recommended* to use the **R** command `file.path()`.
+
+<small>
+```{r}
+url.course <- "http://jvanheld.github.io/EBA15_stats_RStudio/"
+url.data <- file.path(url.course, 'practicals', '02_peak-calling','data')
+
+```
+</small>
+
+
+## Loading a data table
+
+**R** enables to download data directly from the Web. 
+
+
+
+
+practicals/02_peak-calling/data/FNR_200bpwin.bedg.gz 
+
