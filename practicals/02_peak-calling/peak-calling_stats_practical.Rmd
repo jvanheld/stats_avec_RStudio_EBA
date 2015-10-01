@@ -21,8 +21,7 @@ To concatenate paths, it is *recommended* to use the **R** command `file.path()`
 <small>
 ```{r}
 url.course <- "http://jvanheld.github.io/EBA15_stats_RStudio/"
-url.data <- file.path(url.course, 'practicals', '02_peak-calling','data')
-
+url.data <- file.path(dir.base, "practicals", "02_peak-calling", "data")
 ```
 </small>
 
