@@ -2,7 +2,7 @@
 title: 'Practical: basic stats for peak calling'
 author: "Jacques van Helden"
 date: '`r Sys.Date()`'
-output: slidy_presentation
+output: beamer_presentation
 ---
 
 ## Peak-calling: Carl's question
@@ -52,25 +52,88 @@ dim(chip.bedg)
 ```
 
 
-## Exploring a data frame: head()
+## Checking the n first rows: head()
 
-the funciton `head()` displays the first rows of a table.
+The function `head()` displays the first rows of a table.
 
 ```{r}
+head(chip.bedg, n = 5)
+```
+
+## Checking the n last rows: tail()
+
+The function `tail()` displays the first rows of a table.
+
+```{r}
+head(chip.bedg, n = 5)
+```
+
+## Viewing a table
+
+The function `View()` displays the full table in a user-friendly mode.
+
+```{r eval=FALSE}
+View(chip.bedg)
+```
+
+## Selecting arbitrary rows
+
+```{r}
+chip.bedg[100:105,] 
+```
+
+
+## Selecting arbitrary columns
+
+```{r}
+chip.bedg[100:105, 2] 
+chip.bedg[100:105, "start"] 
+chip.bedg[100:105, c("start", "counts")] 
+```
+
+## Adding columns
+
+We can add columns with the result of computations from other columns.
+
+```{r}
+chip.bedg$midpos <- (chip.bedg$start + chip.bedg$end)/2
 head(chip.bedg)
 ```
 
 
-## Exercise: loading the input counts per window
+## Plotting a density profile
+
+We can readily print a plot with the counts per window.
+
+```{r}
+plot(chip.bedg[, c("midpos", "counts")], type="h")
+```
+
+## Plotting a density profile
+
+Let us improve the plot
+
+```{r}
+plot(chip.bedg[, c("midpos", "counts")], type="h", 
+     col="blue", xlab="Genomic position (200bp windows)", 
+     ylab= "Read counts",
+     main="FNR ChIP-seq")
+```
+
+
+## Exercise: exploring the background
 
 We already loaded the count table for the FNR ChIP counts per window. 
 
 The background level will be estimated by loading counts per window in a genomic input sample.
 These counts are available in the same directory a file named `input_200bp.bedg`
 
-**Load the counts per window in the input sample (genome sequencing).**
+1. Load the counts per window in the input sample (genome sequencing).
+2. Plot the density profile of the input
+3. Compare  chip-seq and input density profiles
+4. Compare counts per window between chip-seq and input
 
-## Exercise: loading the input counts per window
+## Solution: loading the input counts per window
 
 ```{r}
 ## Define URL of the input file
@@ -80,7 +143,52 @@ input.bedg.file <- file.path(url.data, "input_200bp.bedg")
 input.bedg <- read.table(input.bedg.file)
 
 ## Set column names
-names(chip.bedg) <- c("chrom", "start", "end","counts")
+names(input.bedg) <- c("chrom", "start", "end","counts")
 
 ```
+
+## Solution: plotting the input density profile
+
+```{r}
+## Compute middle positions per window
+input.bedg$midpos <- (input.bedg$start + input.bedg$end)/2
+
+plot(input.bedg[, c("midpos", "counts")], type="h", 
+     col="red", xlab="Genomic position (200bp windows)", 
+     ylab= "Read counts",
+     main="Background (genomic input)")
+```
+
+## Solution: comparing chip-seq and background density profiles
+
+```{r}
+par(mfrow=c(2,1)) ## Draw two panels on top of each other
+plot(chip.bedg[, c("midpos", "counts")], type="h", 
+     col="blue", xlab="Genomic position (200bp windows)", 
+     ylab= "Read counts",
+     main="FNR ChIP-seq")
+plot(input.bedg[, c("midpos", "counts")], type="h", 
+     col="red", xlab="Genomic position (200bp windows)", 
+     ylab= "Read counts",
+     main="Background (genomic input)")
+par(mfrow=c(1,1)) ## Reset default mode
+
+```
+
+## Solution: comparing counts per window between chip-seq and input
+
+```{r}
+plot(input.bedg$counts, chip.bedg$counts, col="violet",
+     xlab="Genomic input", ylab="FNR ChIP-seq",
+     main="Read counts per 200bp window")
+```
+
+## Solution: comparing counts per window between chip-seq and input
+
+In order to better highight the dynamic range, we can use a log-based representation
+
+```{r}
+plot(input.bedg$counts, chip.bedg$counts, log="xy")
+```
+
 
