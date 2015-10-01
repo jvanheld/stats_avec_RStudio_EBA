@@ -2,7 +2,7 @@
 title: 'Practical: basic stats for peak calling'
 author: "Jacques van Helden"
 date: '`r Sys.Date()`'
-output: beamer_presentation
+output: slidy_presentation
 ---
 
 ## Peak-calling: Carl's question
@@ -115,7 +115,7 @@ Let us improve the plot
 
 ```{r}
 plot(chip.bedg[, c("midpos", "counts")], type="h", 
-     col="blue", xlab="Genomic position (200bp windows)", 
+     col="green", xlab="Genomic position (200bp windows)", 
      ylab= "Read counts",
      main="FNR ChIP-seq")
 ```
@@ -164,7 +164,7 @@ plot(input.bedg[, c("midpos", "counts")], type="h",
 ```{r}
 par(mfrow=c(2,1)) ## Draw two panels on top of each other
 plot(chip.bedg[, c("midpos", "counts")], type="h", 
-     col="blue", xlab="Genomic position (200bp windows)", 
+     col="green", xlab="Genomic position (200bp windows)", 
      ylab= "Read counts",
      main="FNR ChIP-seq")
 plot(input.bedg[, c("midpos", "counts")], type="h", 
@@ -178,7 +178,7 @@ par(mfrow=c(1,1)) ## Reset default mode
 ## Solution: comparing counts per window between chip-seq and input
 
 ```{r}
-plot(input.bedg$counts, chip.bedg$counts, col="violet",
+plot(input.bedg$counts, chip.bedg$counts, col="darkviolet",
      xlab="Genomic input", ylab="FNR ChIP-seq",
      main="Read counts per 200bp window")
 ```
@@ -188,7 +188,20 @@ plot(input.bedg$counts, chip.bedg$counts, col="violet",
 In order to better highight the dynamic range, we can use a log-based representation
 
 ```{r}
-plot(input.bedg$counts, chip.bedg$counts, log="xy")
+plot(input.bedg$counts, chip.bedg$counts, col="darkviolet",
+     xlab="Genomic input", ylab="FNR ChIP-seq",
+     main="Read counts per 200bp window",
+     log="xy")
+grid() ## add a grid
 ```
 
+## Questions
+
+- On the ChIP-seq versus input plot, how would you define  peaks ?
+- Where would you place the limit between peaks and background fluctuations ?
+
+## Exercises
+
+1. Think about further drawing modes to improve your perception of the differences between signal and background.
+2. We will formulate (together) a reasoning path to compute a p-value for each peak.
 
