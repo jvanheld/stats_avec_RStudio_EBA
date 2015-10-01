@@ -187,7 +187,7 @@ chip.bedg <- read.table(file.path(url.data, chip.bedg.file))
 names(chip.bedg) <- c("chrom", "start", "end","counts")
 
 ## Load counts per window in the input sample
-input.bedg.file <- paste(sep="", "input_",window.size,"bp.bedg.gz")
+input.bedg.file <- paste(sep="", "input_",window.size,"bp.bedg")
 input.bedg <- read.table(file.path(url.data, input.bedg.file))
 names(input.bedg) <- c("chrom", "start", "end","counts")
 ```
@@ -488,8 +488,9 @@ $$\lambda_i = x_{\text{norm.input},i} = x_{\text{input},i} \cdot \frac{n_{\text{
 
 
 ```{r}
-sum(read.stats$norm.input != read.stats$input.counts*m/n) == 0
 
+# sum(read.stats$norm.input != read.stats$input.counts*m/n) == 0
+## Compute the Poisson p-value
 read.stats$ppois <- ppois(q=read.stats$counts-1, 
                           lambda=read.stats$norm.input, 
                           lower.tail=FALSE, log=FALSE)
