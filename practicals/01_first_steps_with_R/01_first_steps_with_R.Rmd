@@ -1,5 +1,5 @@
 ---
-title: "Untitled"
+title: "First steps with R"
 author: "Jacques van Helden"
 date: '`r Sys.Date()`'
 output: slidy_presentation
@@ -204,4 +204,165 @@ legend("topright", paste("lambda =", lambda))
 
 
 
+## Solution: a family of Poisson curves
 
+$lambda=0.01$
+
+```{r}
+lambda <- 0.01
+x <- 0:20
+plot(x, dpois(x,lambda=lambda), type="h",   
+     col="darkblue", lwd=5, xlab="X",ylab="dpois(x)")
+legend("topright", paste("lambda=",lambda))
+```
+
+## Solution: a family of Poisson curves
+
+$lambda=0.1$
+
+```{r}
+lambda <- 0.1
+x <- 0:20
+plot(x, dpois(x,lambda=lambda), type="h",   
+     col="darkblue", lwd=5, xlab="X",ylab="dpois(x)")
+legend("topright", paste("lambda=",lambda))
+```
+
+## Solution: a family of Poisson curves
+
+$lambda=1$
+
+```{r}
+lambda <- 1
+x <- 0:20
+plot(x, dpois(x,lambda=lambda), type="h",   
+     col="darkblue", lwd=5, xlab="X",ylab="dpois(x)")
+legend("topright", paste("lambda=",lambda))
+```
+
+## Solution: a family of Poisson curves
+
+$lambda=2$
+
+```{r}
+lambda <- 2
+x <- 0:20
+plot(x, dpois(x,lambda=lambda), type="h",   
+     col="darkblue", lwd=5, xlab="X",ylab="dpois(x)")
+legend("topright", paste("lambda=",lambda))
+```
+
+## Solution: a family of Poisson curves
+
+$lambda=5$
+
+```{r}
+lambda <- 5
+x <- 0:20
+plot(x, dpois(x,lambda=lambda), type="h",   
+     col="darkblue", lwd=5, xlab="X",ylab="dpois(x)")
+legend("topright", paste("lambda=",lambda))
+```
+
+## Solution: a family of Poisson curves
+
+$lambda=5$
+
+```{r}
+lambda <- 5
+x <- 0:40
+plot(x, dpois(x,lambda=lambda), type="h",   
+     col="darkblue", lwd=5, xlab="X",ylab="dpois(x)")
+legend("topright", paste("lambda=",lambda))
+```
+
+## Solution: a family of Poisson curves
+
+$lambda=10$
+
+```{r}
+lambda <- 10
+x <- 0:(4*lambda)
+plot(x, dpois(x,lambda=lambda), type="h",   
+     col="darkblue", lwd=5, xlab="X",ylab="dpois(x)")
+legend("topright", paste("lambda=",lambda))
+```
+
+## Solution: a family of Poisson curves
+
+$lambda=20$
+
+```{r}
+lambda <- 20
+x <- 0:(4*lambda)
+plot(x, dpois(x,lambda=lambda), type="h",   
+     col="darkblue", lwd=2, xlab="X",ylab="dpois(x)")
+legend("topright", paste("lambda=",lambda))
+```
+
+## Solution: a family of Poisson curves
+
+$lambda=30$
+
+```{r}
+lambda <- 30
+x <- 0:(2*lambda)
+plot(x, dpois(x,lambda=lambda), type="h",   
+     col="darkblue", lwd=2, xlab="X",ylab="dpois(x)")
+legend("topright", paste("lambda=",lambda))
+```
+
+## Solution: a family of Poisson curves
+
+$lambda=50$
+
+```{r}
+lambda <- 50
+x <- 0:(2*lambda)
+plot(x, dpois(x,lambda=lambda), type="h",   
+     col="darkblue", lwd=2, xlab="X",ylab="dpois(x)")
+legend("topright", paste("lambda=",lambda))
+```
+
+## Solution: a family of Poisson curves
+
+$lambda=100$
+
+```{r}
+lambda <- 100
+x <- 0:(2*lambda)
+plot(x, dpois(x,lambda=lambda), type="h",   
+     col="darkblue", lwd=2, xlab="X",ylab="dpois(x)")
+legend("topright", paste("lambda=",lambda))
+```
+## Solution: a family of Poisson curves
+
+$lambda=1000$
+
+```{r}
+lambda <- 1000
+x <- 0:(2*lambda)
+plot(x, dpois(x,lambda=lambda), type="h",   
+     col="darkblue", lwd=2, xlab="X",ylab="dpois(x)")
+legend("topright", paste("lambda=",lambda))
+```
+
+## Solution: a family of Poisson curves
+
+$lambda=10000$
+
+```{r}
+lambda <- 10000
+x <- 0:(2*lambda)
+plot(x, dpois(x,lambda=lambda), type="h",   
+     col="darkblue", lwd=2, xlab="X",ylab="dpois(x)")
+legend("topright", paste("lambda=",lambda))
+```
+
+## Solution: a family of Poisson curves
+
+$lambda=100000$
+
+```{r}
+plot(95000:105000, dpois(95000:105000,lambda=100000), type="h", col="darkblue", xlab="X",ylab="dpois(x)")
+```
