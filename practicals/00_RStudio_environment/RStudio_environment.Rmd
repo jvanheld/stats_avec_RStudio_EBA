@@ -10,27 +10,28 @@ output: slidy_presentation
 
 | Resource | URL |
 |----------|-----|
-| **IFB cloud** | [http://cloud.france-bioinformatique.fr/](http://cloud.france-bioinformatique.fr/) |
 | **RStudio** | [https://www.rstudio.com/](https://www.rstudio.com/) |
+| **IFB cloud** | [http://cloud.france-bioinformatique.fr/](http://cloud.france-bioinformatique.fr/) |
+| **RStudio VM server** at IFB cloud | [http://192.54.201.140/](http://192.54.201.140/) |
+
+The RStudio VM server is available for today's practical only. 
+User logins and passwords will be given at course. 
 
 ## Opening RStudio
 
 1. Paste a post-it on the top of your laptop screen.
 2. If RStudio is installed on your laptop, just open it
-3. Otherwise
-      a. Open an a connection to the **[IFB cloud](http://cloud.france-bioinformatique.fr/)**.
-      b. Enter in your **dashboard** (requires login).
-      c. Create a **vDisk** of 5 Gigabases named (for example) *stats-tuto-hd*.
-      d. Check that your VM from previous sessions is well shut down.
-      e. Create a **New Instance** of type **R statistical computing** named (for example) *stats-tuto-vm*, with the smallest size (*c2.small*), and a the **Persistent disk** *stats-tuto-hd*. 
+3. Otherwise, 
+     - Open a connection to  **RStudio VM server** at IFB cloud [http://192.54.201.140/](http://192.54.201.140/)
+     - Enter your login and password (given during the course)
 4. Once you see the RStudio window (snapshot next slides), remove the post-it from the top of your laptop screen.
 
 
 ## RStudio environment
 
-
+<small>
 ![rstudio snapshot](images/rstudio-server-snapshot.png)
-
+</small>
 
 ## Going further
 
