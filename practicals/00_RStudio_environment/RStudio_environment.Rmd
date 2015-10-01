@@ -1,0 +1,39 @@
+---
+title: "Starting an Rstudio environment"
+author: "Jacques van Helden"
+date: '`r Sys.Date()`'
+output: slidy_presentation
+---
+
+## Resources
+
+
+| Resource | URL |
+|----------|-----|
+| **IFB cloud** | [http://cloud.france-bioinformatique.fr/](http://cloud.france-bioinformatique.fr/) |
+| **RStudio** | [https://www.rstudio.com/](https://www.rstudio.com/) |
+
+## Opening RStudio
+
+1. Paste a post-it on the top of your laptop screen.
+2. If RStudio is installed on your laptop, just open it
+3. Otherwise
+      a. Open an a connection to the **[IFB cloud](http://cloud.france-bioinformatique.fr/)**.
+      b. Enter in your **dashboard** (requires login).
+      c. Create a **vDisk** of 5 Gigabases named (for example) *stats-tuto-hd*.
+      d. Check that your VM from previous sessions is well shut down.
+      e. Create a **New Instance** of type **R statistical computing** named (for example) *stats-tuto-vm*, with the smallest size (*c2.small*), and a the **Persistent disk** *stats-tuto-hd*. 
+4. Once you see the RStudio window (snapshot next slides), remove the post-it from the top of your laptop screen.
+
+
+## RStudio environment
+
+
+![rstudio snapshot](images/rstudio-server-snapshot.png)
+
+
+## Going further
+
+You can now run the tutorial **First steps with R** 
+[[html](../01_first_steps_with_R/01_first_steps_with_R.html)]
+[[pdf](../01_first_steps_with_R/01_first_steps_with_R.pdf)]
