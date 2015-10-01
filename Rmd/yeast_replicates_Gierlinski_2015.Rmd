@@ -25,11 +25,15 @@ output:
 |--------|-------------|
 | WT     | Wild-type   |
 | Snf2   | Catalytic subunit of the SWI/SNF chromatin remodeling complex; involved in transcriptional regulation (source: [SGD](http://www.yeastgenome.org/locus/snf2/overview)) |
-| SWI/SNF | SWItch/Sucrose Non-Fermentable: nucleosome remodeling complex found in both eukaryotes and prokaryotes (source: [Wikipedia](https://en.wikipedia.org/wiki/SWI/SNF)) |
+| SWI/SNF | **SWI**tch/**S**ucrose **N**on-**F**ermentable: nucleosome remodeling complex found in both eukaryotes and prokaryotes (source: [Wikipedia](https://en.wikipedia.org/wiki/SWI/SNF)) |
 
 --------------------------------------------
 
 ## Introduction
+
+***How many replicates do I need*** ? This is the classical question everybody asks before starting an experiment aiming at detecting differentially expressed genes.
+
+
 
 --------------------------------------------
 
