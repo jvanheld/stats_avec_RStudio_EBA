@@ -2,7 +2,7 @@
 title: 'Practical: basic stats for peak calling'
 author: "Jacques van Helden"
 date: '`r Sys.Date()`'
-output: beamer_presentation
+output: slidy_presentation
 ---
 
 ## Peak-calling: Carl's question
@@ -30,8 +30,57 @@ url.data <- file.path(url.course, "practicals", "02_peak-calling", "data")
 
 **R** enables to download data directly from the Web. 
 
+Load counts per window in chip sample.
+
+```{r}
+## Define URL of the ChIP file
+chip.bedg.file <- file.path(url.data, "FNR_200bp.bedg")
+
+## Load the file content in an R data.frame
+chip.bedg <- read.table(chip.bedg.file)
+
+## Set column names
+names(chip.bedg) <- c("chrom", "start", "end","counts")
+```
+
+## Exploring a data frame: dim()
+
+Before anything else, let us inspect the size of the data frame, in order to check that it was properly lodaded.
+
+```{r}
+dim(chip.bedg)
+```
 
 
+## Exploring a data frame: head()
 
-practicals/02_peak-calling/data/FNR_200bpwin.bedg.gz 
+the funciton `head()` displays the first rows of a table.
+
+```{r}
+head(chip.bedg)
+```
+
+
+## Exercise: loading the input counts per window
+
+We already loaded the count table for the FNR ChIP counts per window. 
+
+The background level will be estimated by loading counts per window in a genomic input sample.
+These counts are available in the same directory a file named `input_200bp.bedg`
+
+**Load the counts per window in the input sample (genome sequencing).**
+
+## Exercise: loading the input counts per window
+
+```{r}
+## Define URL of the input file
+input.bedg.file <- file.path(url.data, "input_200bp.bedg")
+
+## Load the file content in an R data.frame
+input.bedg <- read.table(input.bedg.file)
+
+## Set column names
+names(chip.bedg) <- c("chrom", "start", "end","counts")
+
+```
 

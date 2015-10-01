@@ -58,7 +58,50 @@ url.data &lt;-<span class="st"> </span><span class="kw">file.path</span>(url.cou
 <div id="loading-a-data-table" class="slide section level2">
 <h1>Loading a data table</h1>
 <p><strong>R</strong> enables to download data directly from the Web.</p>
-<p>practicals/02_peak-calling/data/FNR_200bpwin.bedg.gz</p>
+<p>Load counts per window in chip sample.</p>
+<pre class="sourceCode r"><code class="sourceCode r">## Define URL of the ChIP file
+chip.bedg.file &lt;-<span class="st"> </span><span class="kw">file.path</span>(url.data, <span class="st">&quot;FNR_200bp.bedg&quot;</span>)
+
+## Load the file content in an R data.frame
+chip.bedg &lt;-<span class="st"> </span><span class="kw">read.table</span>(chip.bedg.file)
+
+## Set column names
+<span class="kw">names</span>(chip.bedg) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;chrom&quot;</span>, <span class="st">&quot;start&quot;</span>, <span class="st">&quot;end&quot;</span>,<span class="st">&quot;counts&quot;</span>)</code></pre>
+</div>
+<div id="exploring-a-data-frame-dim" class="slide section level2">
+<h1>Exploring a data frame: dim()</h1>
+<p>Before anything else, let us inspect the size of the data frame, in order to check that it was properly lodaded.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">dim</span>(chip.bedg)</code></pre>
+<pre><code>## [1] 23199     4</code></pre>
+</div>
+<div id="exploring-a-data-frame-head" class="slide section level2">
+<h1>Exploring a data frame: head()</h1>
+<p>the funciton <code>head()</code> displays the first rows of a table.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(chip.bedg)</code></pre>
+<pre><code>##                          chrom start  end counts
+## 1 gi|49175990|ref|NC_000913.2|     0  200   1594
+## 2 gi|49175990|ref|NC_000913.2|   200  400    834
+## 3 gi|49175990|ref|NC_000913.2|   400  600    222
+## 4 gi|49175990|ref|NC_000913.2|   600  800    172
+## 5 gi|49175990|ref|NC_000913.2|   800 1000    123
+## 6 gi|49175990|ref|NC_000913.2|  1000 1200    116</code></pre>
+</div>
+<div id="exercise-loading-the-input-counts-per-window" class="slide section level2">
+<h1>Exercise: loading the input counts per window</h1>
+<p>We already loaded the count table for the FNR ChIP counts per window.</p>
+<p>The background level will be estimated by loading counts per window in a genomic input sample. These counts are available in the same directory a file named <code>input_200bp.bedg</code></p>
+<p><strong>Load the counts per window in the input sample (genome sequencing).</strong></p>
+</div>
+<div id="exercise-loading-the-input-counts-per-window-1" class="slide section level2">
+<h1>Exercise: loading the input counts per window</h1>
+<pre class="sourceCode r"><code class="sourceCode r">## Define URL of the input file
+input.bedg.file &lt;-<span class="st"> </span><span class="kw">file.path</span>(url.data, <span class="st">&quot;input_200bp.bedg&quot;</span>)
+
+## Load the file content in an R data.frame
+input.bedg &lt;-<span class="st"> </span><span class="kw">read.table</span>(input.bedg.file)
+
+## Set column names
+<span class="kw">names</span>(chip.bedg) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;chrom&quot;</span>, <span class="st">&quot;start&quot;</span>, <span class="st">&quot;end&quot;</span>,<span class="st">&quot;counts&quot;</span>)</code></pre>
 </div>
 
   <!-- dynamically load mathjax for compatibility with self-contained -->
