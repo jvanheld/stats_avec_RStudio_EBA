@@ -33,15 +33,30 @@ url.data <- file.path(url.course, "practicals", "02_peak-calling", "data")
 Load counts per window in chip sample.
 
 ```{r}
+### load data tables as data.frames
+
+## ChIP IP counts in windows of 1kb or 10 kb
+ip.1kb <- read.table(file.path(url.data,'SRR540190_GSM986061_siNT_ER_E2_r2_sorted.chr21.1kb.cov'))
+ip.10kb <- read.table(file.path(url.data,'SRR540190_GSM986061_siNT_ER_E2_r2_sorted.chr21.10kb.cov'))
+
+## ChIP input counts in windows of 1kb or 10 kb
+input.1kb <- read.table(file.path(url.data,'SRR540220_GSM986091_MCF_input_r3_sorted.chr21.1kb.cov'))
+input.10kb <- read.table(file.path(url.data,'SRR540220_GSM986091_MCF_input_r3_sorted.chr21.10kb.cov'))
+
+
+```
+
+
+#```{r}
 ## Define URL of the ChIP file
-chip.bedg.file <- file.path(url.data, "FNR_200bp.bedg")
+#chip.bedg.file <- file.path(url.data, "FNR_200bp.bedg")
 
 ## Load the file content in an R data.frame
-chip.bedg <- read.table(chip.bedg.file)
+#chip.bedg <- read.table(chip.bedg.file)
 
 ## Set column names
-names(chip.bedg) <- c("chrom", "start", "end","counts")
-```
+#names(chip.bedg) <- c("chrom", "start", "end","counts")
+#```
 
 ## Exploring a data frame: dim()
 
