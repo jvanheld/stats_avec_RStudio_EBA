@@ -20,13 +20,13 @@ publish: clean
 
 ################################################################
 ## Browse the Web site
-BROWSER=firefox
+#BROWSER=firefox
 LOCAL=index.html
 local:
-	open -a ${BROWSER} ${LOCAL}
+	open  ${LOCAL}
 
 #WEB_URL=http://pedagogix-tagc.univ-mrs.fr/courses/SBBCU16L_cisreg
 WEB_URL=http://jvanheld.github.io/EBA15_stats_RStudio/
 web:
-	open -a ${BROWSER} ${WEB_URL}
+	open  ${WEB_URL}
 

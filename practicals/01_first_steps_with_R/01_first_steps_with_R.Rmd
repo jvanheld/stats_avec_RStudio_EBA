@@ -2,9 +2,22 @@
 title: "First steps with R"
 author: "Jacques van Helden"
 date: '`r Sys.Date()`'
-output: slidy_presentation
+output:
+  html_document:
+    fig_caption: yes
+    highlight: zenburn
+    theme: cerulean
+    toc: yes
+    toc_depth: 3
+  pdf_document:
+    fig_caption: yes
+    highlight: zenburn
+    toc: yes
+    toc_depth: 3
+  word_document: default
 ---
- 
+
+
 ## Scope
 
 In this session we will explore basic manipulations of variables.

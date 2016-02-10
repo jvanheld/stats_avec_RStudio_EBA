@@ -2,7 +2,49 @@
 title: 'Practical: basic stats for peak calling'
 author: "Jacques van Helden"
 date: '`r Sys.Date()`'
-output: slidy_presentation
+output:
+  ioslides_presentation:
+    colortheme: dolphin
+    fig_caption: yes
+    fig_height: 6
+    fig_width: 7
+    fonttheme: structurebold
+    footer: UNAM LCG BEII - Jacques van Helden - Introduction and contents
+    highlight: tango
+    incremental: no
+    keep_md: no
+    smaller: yes
+    theme: cerulean
+    toc: yes
+    widescreen: yes
+  beamer_presentation:
+    colortheme: dolphin
+    fig_caption: yes
+    fig_height: 6
+    fig_width: 7
+    fonttheme: structurebold
+    highlight: tango
+    incremental: no
+    keep_tex: no
+    slide_level: 2
+    theme: Montpellier
+    toc: yes
+  slidy_presentation:
+    fig_caption: yes
+    fig_height: 6
+    fig_width: 7
+    footer: UNAM LCG BEII - Jacques van Helden - Introduction and contents
+    highlight: tango
+    incremental: no
+    keep_md: no
+    smaller: yes
+    theme: cerulean
+    toc: yes
+    widescreen: yes
+font-import: http://fonts.googleapis.com/css?family=Risque
+font-family: Garamond
+address: Lab.Technological Advances for Genomics and Clinics, Inserm Unit U1090
+transition: linear
 ---
 
 ## Peak-calling: Carl's question
@@ -67,7 +109,7 @@ head(chip.bedg, n = 5)
 The function `tail()` displays the first rows of a table.
 
 ```{r}
-head(chip.bedg, n = 5)
+tail(chip.bedg, n = 5)
 ```
 
 ## Viewing a table
