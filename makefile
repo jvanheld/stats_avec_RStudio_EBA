@@ -26,7 +26,7 @@ local:
 	open  ${LOCAL}
 
 #WEB_URL=http://pedagogix-tagc.univ-mrs.fr/courses/SBBCU16L_cisreg
-WEB_URL=http://jvanheld.github.io/EBA15_stats_RStudio/
+WEB_URL=http://jvanheld.github.io/stats_avec_RStudio_EBA
 web:
 	open  ${WEB_URL}
 
