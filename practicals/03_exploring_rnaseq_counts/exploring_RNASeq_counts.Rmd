@@ -1,0 +1,259 @@
+---
+title: 'Practical: exploring RNA-Seq counts'
+author: "Julie Aubert - Hugo Varet - Jacques van Helden"
+date: '`r Sys.Date()`'
+output:
+  slidy_presentation:
+    fig_caption: yes
+    fig_height: 6
+    fig_width: 7
+    highlight: tango
+    incremental: no
+    keep_md: no
+    smaller: yes
+    theme: cerulean
+    toc: yes
+    widescreen: yes
+  ioslides_presentation:
+    colortheme: dolphin
+    fig_caption: yes
+    fig_height: 6
+    fig_width: 7
+    fonttheme: structurebold
+    highlight: tango
+    incremental: no
+    keep_md: no
+    smaller: yes
+    theme: cerulean
+    toc: yes
+    widescreen: yes
+  beamer_presentation:
+    colortheme: dolphin
+    fig_caption: yes
+    fig_height: 6
+    fig_width: 7
+    fonttheme: structurebold
+    highlight: tango
+    incremental: no
+    keep_tex: no
+    slide_level: 2
+    theme: Montpellier
+    toc: yes
+font-import: http://fonts.googleapis.com/css?family=Risque
+font-family: Garamond
+transition: linear
+---
+
+## Context
+
+Presentation of the experiment:
+
+ - Data extracted from the publication: Gierliński et al. *Statistical models for RNA-seq data derived from a two-condition 48-replicate experiment*, Bioinformatics, 2015
+ - Study of 48 WT yeast samples vs 48 Snf2 (KO) samples.
+
+## Loading a data table
+
+**R** enables to download data directly from the Web. 
+
+Load counts per gene for each biological condition (WT and Snf2).
+
+```{r}
+## Load the files content in an R data.frame
+data.path <- "http://jvanheld.github.io/stats_avec_RStudio_EBA/practicals/yeast_2x48_replicates/data"
+Snf2 <- read.table(file=paste(data.path, "Snf2_raw.tsv", sep="/"), row.names=1)
+WT <- read.table(file=paste(data.path, "WT_raw.tsv", sep="/"), row.names=1)
+## look at the beginning of each dataset:
+print(Snf2[1:4,1:5])
+print(WT[1:4,1:5])
+```
+
+## Merging the two biological conditions (1)
+
+```{r}
+# dimension of the two tables (numbers of rows/columns)
+dim(Snf2)
+dim(WT)
+
+# randomly select N samples for each condition
+nb.replicates <- 4
+WT <- WT[,sample(1:ncol(WT), nb.replicates, replace=FALSE)]
+Snf2 <- Snf2[,sample(1:ncol(Snf2), nb.replicates, replace=FALSE)]
+
+# redefine column names
+colnames(Snf2) <- paste0("S", 1:ncol(Snf2))
+colnames(WT) <- paste0("WT", 1:ncol(WT))
+```
+
+## Merging the two biological conditions (2)
+
+```{r}
+# check that the genes are in the same order
+all(rownames(WT)==rownames(Snf2))
+
+# combine the two tables
+counts <- cbind(WT, Snf2)
+print(counts[1:4,])
+```
+
+## Differential analysis using DESeq2
+
+```{r message=FALSE}
+# load DESeq2 package
+library(DESeq2)
+# create a table describing the experiment
+expDesign <- data.frame(sample=colnames(counts), condition=ifelse(grepl("WT", colnames(counts)), "WT", "Snf"))
+print(head(expDesign))
+# create the DESeq2 main object: dds
+dds <- DESeqDataSetFromMatrix(countData = counts, colData = expDesign, design = ~ condition)
+print(dds)
+```
+
+## Basic description of the data (1)
+
+```{r}
+# number of reads per sample
+barplot(colSums(counts)/1000000, main="Total number of reads per sample (million)")
+```
+
+## Basic description of the data (2)
+
+```{r}
+# proportion of null counts per sample
+barplot(apply(counts, 2, function(x) 100*mean(x==0)), main="Percentage of null counts per sample")
+```
+
+## Normalization
+
+```{r}
+# normalization
+dds <- estimateSizeFactors(dds)
+print(sizeFactors(dds))
+# effect of the normalization
+normCounts <- counts(dds, normalized=TRUE)
+par(mfrow=c(1,2))
+boxplot(log2(counts+1), main="Raw counts")
+boxplot(log2(normCounts+1), main="Normalized counts")
+```
+
+## Principal Component Analysis (PCA)
+
+```{r message=FALSE}
+# dispersions estimation
+dds <- estimateDispersions(dds)
+# Principal Component Analysis (PCA) plot
+rld <- rlog(dds)
+plotPCA(rld, intgroup="condition")
+```
+
+## Statistical test for each gene
+
+```{r}
+# statistical modeling and testing
+dds <- nbinomWaldTest(dds)
+res.DESeq2 <- results(dds, alpha=0.05, pAdjustMethod="BH")
+print(head(res.DESeq2))
+```
+
+## Statistical test for each gene (2)
+
+```{r}
+summary(res.DESeq2, alpha=0.05)
+```
+
+## Histogram of raw P-values
+
+```{r}
+# histogram of raw P-values
+hist(res.DESeq2$pvalue, col="lightblue", main="Histogram of raw P-values", breaks=20, xlab="P-value")
+```
+
+## MA-plot
+
+```{r}
+# MA-plot of the results
+plotMA(res.DESeq2)
+```
+
+## Differential analysis using edgeR
+
+```{r message=FALSE}
+library(edgeR)
+# create the edgeR main object: dge
+dge <- DGEList(counts=counts, remove.zeros=FALSE)
+dge$design <- model.matrix(~ condition, data=expDesign)
+print(dge)
+```
+
+## edgeR normalization
+
+```{r}
+# normalization
+dge <- calcNormFactors(dge)
+print(dge$samples$norm.factors)
+```
+
+## Dispersions estimations
+
+```{r}
+# dispersions estimation
+dge <- estimateGLMCommonDisp(dge, dge$design)
+dge <- estimateGLMTrendedDisp(dge, dge$design)
+dge <- estimateGLMTagwiseDisp(dge, dge$design)
+```
+
+## Modeling and testing
+
+```{r}
+# statistical modeling and testing
+fit <- glmFit(dge, dge$design)
+print(dge$design)
+lrt <- glmLRT(fit, coef="conditionWT")
+res.edgeR <- topTags(lrt,n=nrow(dge$counts),adjust.method="BH")$table
+print(head(res.edgeR))
+```
+
+## Compare DESeq2 and edgeR results: normalization
+
+```{r}
+# normalization
+plot(sizeFactors(dds), dge$samples$norm.factors, pch=16, xlab="DESeq2 size factors", ylab="edgeR normalization factors")
+```
+
+## Compare DESeq2 and edgeR results: log2FC estimations
+
+```{r}
+# log2FC estimations
+plot(res.edgeR$logFC, res.DESeq2$log2FoldChange, pch=16, cex=0.4, xlim=c(-2,2), ylim=c(-2,2),
+     xlab="edgeR log2(Fold-Change)", ylab="DESeq2 log2(Fold-Change)")
+```
+
+## Compare DESeq2 and edgeR results: reorder the results according to gene names
+
+```{r}
+# reorder the results according to gene names
+res.edgeR <- res.edgeR[order(rownames(res.edgeR)),]
+res.DESeq2 <- res.DESeq2[order(rownames(res.DESeq2)),]
+plot(res.edgeR$logFC, res.DESeq2$log2FoldChange, pch=16, cex=0.4, xlim=c(-2,2), ylim=c(-2,2),
+     xlab="edgeR log2(Fold-Change)", ylab="DESeq2 log2(Fold-Change)")
+abline(a=0, b=1, col="red", lwd=4) # draw the y=x curve (y=a+b*x with a=0 and b=1)
+abline(h=0, v=0)
+```
+
+## Compare DESeq2 and edgeR results: p-values
+
+```{r}
+plot(res.edgeR$PValue, res.DESeq2$pvalue, 
+     pch=16, cex=0.4, xlab="edgeR raw P-value", ylab="DESeq2 raw P-value")
+abline(a=0, b=1, col="red", lwd=4) # draw the y=x curve (y=a+b*x with a=0 and b=1)
+```
+
+## Number of differentially expressed genes
+
+```{r}
+# remember the number of replicates
+print(nb.replicates)
+# DESeq2
+sum(res.DESeq2$padj <= 0.05, na.rm=TRUE)
+# edgeR
+sum(res.edgeR$FDR <= 0.05, na.rm=TRUE)
+```
