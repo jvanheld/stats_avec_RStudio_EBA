@@ -2,17 +2,16 @@
 title: "Starting an Rstudio environment"
 author: "Jacques van Helden"
 date: '`r Sys.Date()`'
-output: slidy_presentation
+output: beamer_presentation
 ---
 
 ## Resources
 
 
 | Resource | URL |
-|----------|-----|
-| **RStudio** | [https://www.rstudio.com/](https://www.rstudio.com/) |
+|---------------|-----------------------------------------------|
+| **RStudio**   | [https://www.rstudio.com/](https://www.rstudio.com/) |
 | **IFB cloud** | [http://cloud.france-bioinformatique.fr/](http://cloud.france-bioinformatique.fr/) |
-| **RStudio VM server** at IFB cloud | [http://192.54.201.140/](http://192.54.201.140/) |
 
 The RStudio VM server is available for today's practical only. 
 User logins and passwords will be given at course. 
@@ -20,18 +19,35 @@ User logins and passwords will be given at course.
 ## Opening RStudio
 
 1. Paste a post-it on the top of your laptop screen.
-2. If RStudio is installed on your laptop, just open it
-3. Otherwise, 
-     - Open a connection to  **RStudio VM server** at IFB cloud [http://192.54.201.140/](http://192.54.201.140/)
-     - Enter your login and password (given during the course)
-4. Once you see the RStudio window (snapshot next slides), remove the post-it from the top of your laptop screen.
+2. Start RStudio
+
+    - If RStudio is installed on your laptop, just open it.
+    - Otherwise, start an RStudio Virtual Machine (next slide). 
+
+3. Once you see the RStudio window (snapshot next slides), remove the post-it from the top of your laptop screen.
+
+
+## RStudio Virtual Machine at the IFB cloud
+
+- Open a connection to the IFB cloud (http://cloud.france-bioinformatique.fr/cloud/).
+- Enter your login and password (given during the course).
+- Click **New instance** and select R statistical computing (2016-02) (we call it hereafter Rstudio virtual machine).
+- Click **View Instances** until the virtual machine has booted (the instance appears with a green circle). 
+- Click on the **http** link besides the new Rstudio instance. 
+- This opens the Rstudio virtual machine. Enter the login (ruser) and password (ruser).
 
 
 ## RStudio environment
 
-<small>
+```{r out.width = "100%", echo=FALSE, fig.cap="**Snapshot of the RStudio Window.** "}
+knitr::include_graphics("images/rstudio-server-snapshot.png")
+```
+
+
+<!--<small>
 ![rstudio snapshot](images/rstudio-server-snapshot.png)
 </small>
+-->
 
 ## Going further
 
