@@ -3,6 +3,26 @@ title: "Stats with R and RStudio"
 author: "Jacques van Helden, Hugo varet and Julie Aubert"
 date: '`r Sys.Date()`'
 output:
+  ioslides_presentation:
+    colortheme: dolphin
+    fig_caption: yes
+    fig_height: 6
+    fig_width: 7
+    fonttheme: structurebold
+    footer: Jacques van Helden - Stats with R and RStudio
+    highlight: tango
+    slide_level: 2
+    smaller: yes
+    theme: cerulean
+    toc: yes
+    widescreen: yes
+  html_document:
+    fig_caption: yes
+    highlight: zenburn
+    theme: cerulean
+    toc: yes
+    toc_depth: 3
+    toc_float: yes
   slidy_presentation:
     fig_caption: yes
     fig_height: 6
@@ -15,21 +35,11 @@ output:
     theme: cerulean
     toc: yes
     widescreen: yes
-  ioslides_presentation:
-    colortheme: dolphin
+  pdf_document:
     fig_caption: yes
-    fig_height: 6
-    fig_width: 7
-    fonttheme: structurebold
-    footer: Jacques van Helden - Stats with R and RStudio
-    highlight: tango
-    incremental: no
-    keep_md: no
-    slide_level: 2
-    smaller: yes
-    theme: cerulean
+    highlight: zenburn
     toc: yes
-    widescreen: yes
+    toc_depth: 3
   beamer_presentation:
     colortheme: dolphin
     fig_caption: yes
@@ -42,6 +52,7 @@ output:
     slide_level: 2
     theme: Frankfurt
     toc: yes
+  word_document: default
 font-import: http://fonts.googleapis.com/css?family=Risque
 font-family: Garamond
 subtitle: 'Practical: basic stats for peak calling'
@@ -223,8 +234,8 @@ Does the background look homogeneous? How do you interpret its shape?
 
 ## Solution: comparing chip-seq and background density profiles
 
-```{r fig.width=7, fig.height=8}
-par(mfrow=c(2,1)) ## Draw two panels on top of each other
+```{r fig.width=8, fig.height=4}
+par(mfrow=c(1,2)) ## Draw two panels besides each other
 plot(chip.bedg[, c("midpos", "counts")], type="h", 
      col="darkgreen", xlab="Genomic position (200bp bins)", 
      ylab= "Reads per bin",
@@ -420,6 +431,19 @@ mean(count.table$scaled.ratio.libsum)
 median(count.table$scaled.ratio.libsum)
 ```
 
+## Print summary statistics
+
+Let us compare the mean and median counts for ChIP and input samples. 
+
+
+```{r}
+summary(count.table[, c("counts.chip", "counts.input")])
+```
+
+- For the input, mean and medium are almost the same. 
+- For the ChIP, we have a 10% difference. 
+- This difference likely results from the "statistical outliers", i.e. our peaks. 
+
 ## Input normalization by median
 
 Why? the median is very robust to outliers (to be discussed during the course).
@@ -428,7 +452,7 @@ Why? the median is very robust to outliers (to be discussed during the course).
 ## Normalize input counts by median count
 count.table$input.scaled.median <- count.table$counts.input * median(count.table$counts.chip)/median(count.table$counts.input)
 
-hist(count.table$input.scaled.median, breaks=2000, xlim=c(0, 5), xlab="Count ratios after libsum scaling", main="Count ratio histogram")
+hist(count.table$input.scaled.median, breaks=2000, xlim=c(-5, 5), xlab="Count ratios after libsum scaling", main="Count ratio histogram")
 abline(v=mean(count.table$scaled.ratio.median), col="darkgreen", lwd=3, lty="dashed")
 abline(v=median(count.table$scaled.ratio.median), col="brown", lwd=3)
 legend("topright", c("mean", "median"), col=c("darkgreen", "brown"), lwd=3)
