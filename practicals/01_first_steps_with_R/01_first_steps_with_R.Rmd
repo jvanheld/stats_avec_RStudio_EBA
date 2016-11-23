@@ -3,6 +3,11 @@ title: "First steps with R"
 author: "Jacques van Helden"
 date: '`r Sys.Date()`'
 output:
+  pdf_document:
+    fig_caption: yes
+    highlight: zenburn
+    toc: yes
+    toc_depth: 3
   html_document:
     fig_caption: yes
     highlight: zenburn
@@ -10,11 +15,6 @@ output:
     toc: yes
     toc_depth: 3
     toc_float: yes
-  pdf_document:
-    fig_caption: yes
-    highlight: zenburn
-    toc: yes
-    toc_depth: 3
   word_document: default
 ---
 
@@ -26,23 +26,84 @@ In this session we will explore basic manipulations of variables.
 - Assigning a value to a variable
 - Basic operations on numbers
 
-## Slide With Code
+## ***R*** is a calculator
 
 **Convention:**
 
-- Gray boxes: commands to type in RStudio **Console** (bottom-left panel).
+- Dark boxes: commands to type in RStudio **Console** (bottom-left panel).
 - White boxes: the result you should obtain.
 
-**Example:** create a variable named ***a***, assign the value ***27*** to this variable, and ***print*** the result. 
+**Example:** compute a simple addition.  
 
 ```{r}
-a <- 27
+2 + 5
+```
+## Assign a value to a variable
+
+In ***R*** **`<-`** means "create a variable and assign its value."
+
+**Example:** 
+
+- create a variable named $a$, 
+- assign the value $2$ to this variable, 
+- ***print*** the result. 
+
+```{r}
+a <- 2
 print(a)
+```
+
+## Computing with variables
+
+**Example:** 
+
+- create a variable named $b$ having value $5$, 
+- compute  $a + b$ and store the result in a variable named $c$,
+- ***print*** the result. 
+
+```{r}
+b <- 5
+c <- a + b
+print(c)
+```
+
+## Variables need to be updated
+
+**Example:** 
+
+- change the value of $a$ to $3$, 
+- print  the value of $c$
+- Is this the correct result for $c = a + b$? Why?
+
+```{r}
+a <- 3 ## Change the value of a
+print(c) ## Print the value of c
+
+## Check whether c equals a + b
+c == a + b
+```
+
+Note: **`==`** is used to test whether two variables have the same content. 
+
+## Updating variable contents
+
+**Example:** 
+
+- change the value of $a$ to $27$, 
+- recompute and print  the value of $c$
+
+```{r}
+a <- 27 ## Change the value of a
+c <- a + b
+print(c) ## Print the value of c
+
+## Check whether c  equals a + b
+c == a + b
 ```
 
 ## Vectors of values
 
-The simplest data structure in R is a vector.
+The simplest data structure in ***R*** is a vector.
 In the previous example, the variable ***a*** was actually a vector with a single value.
 
 **Example:** create a variable named  ***three.numbers***, and initialize it with a vector with values ***27***, ***12*** and ***3000***.
@@ -147,7 +208,7 @@ plot(x,y) # Check the result
 
 This first plot is not very nice. Let us get some help to improve it.
 
-## Getting help for R functions
+## Getting help for ***R*** functions
 
 
 Need help? Type **`help()`**. 
@@ -162,7 +223,7 @@ A question? Type `?`
 ?plot
 ```
 
-**Result:** R displays the help message for the function `dpois()`.
+**Result:** ***R*** displays the help message for the function `dpois()`.
 
 ## Exercise: improve Poisson density plot
 
@@ -380,3 +441,13 @@ $lambda=100000$
 ```{r}
 plot(95000:105000, dpois(95000:105000,lambda=100000), type="h", col="darkblue", xlab="X",ylab="dpois(x)")
 ```
+
+## Before finishing -- keep track of your session
+
+Tractability is an important issue in sciences. 
+The ***R*** function `sessionInfo()` summarizes information about the versions of R, the operating system, and all the libraries used during a session. 
+
+```{r}
+sessionInfo()
+```
+

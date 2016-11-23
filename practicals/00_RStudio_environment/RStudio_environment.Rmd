@@ -2,8 +2,51 @@
 title: "Starting an Rstudio environment"
 author: "Jacques van Helden"
 date: '`r Sys.Date()`'
-output: beamer_presentation
+output:
+  slidy_presentation:
+    fig_caption: yes
+    fig_height: 6
+    fig_width: 7
+    footer: UNAM LCG BEII - Jacques van Helden - Introduction and contents
+    highlight: tango
+    incremental: no
+    keep_md: no
+    smaller: yes
+    theme: cerulean
+    toc: yes
+    widescreen: yes
+  ioslides_presentation:
+    colortheme: dolphin
+    fig_caption: yes
+    fig_height: 6
+    fig_width: 7
+    fonttheme: structurebold
+    footer: UNAM LCG BEII - Jacques van Helden - Introduction and contents
+    highlight: tango
+    incremental: no
+    keep_md: no
+    smaller: yes
+    theme: cerulean
+    toc: yes
+    widescreen: yes
+  beamer_presentation:
+    colortheme: dolphin
+    fig_caption: yes
+    fig_height: 6
+    fig_width: 7
+    fonttheme: structurebold
+    highlight: tango
+    incremental: no
+    keep_tex: no
+    slide_level: 2
+    theme: Montpellier
+    toc: yes
+font-import: http://fonts.googleapis.com/css?family=Risque
+font-family: Garamond
+address: Lab.Technological Advances for Genomics and Clinics, Inserm Unit U1090
+transition: linear
 ---
+
 
 ## Resources
 
@@ -13,26 +56,31 @@ output: beamer_presentation
 | **RStudio**   | [https://www.rstudio.com/](https://www.rstudio.com/) |
 | **IFB cloud** | [http://cloud.france-bioinformatique.fr/](http://cloud.france-bioinformatique.fr/) |
 
-The RStudio VM server is available for today's practical only. 
-User logins and passwords will be given at course. 
 
 ## Opening RStudio
 
 1. Paste a post-it on the top of your laptop screen.
+
 2. Start RStudio
 
     - If RStudio is installed on your laptop, just open it.
     - Otherwise, start an RStudio Virtual Machine (next slide). 
 
-3. Once you see the RStudio window (snapshot next slides), remove the post-it from the top of your laptop screen.
-
+3. When you see the RStudio environment, remove the post-it from your laptop. 
 
 ## RStudio Virtual Machine at the IFB cloud
 
-- Open a connection to the IFB cloud (http://cloud.france-bioinformatique.fr/cloud/).
-- Enter your login and password (given during the course).
-- Click **New instance** and select R statistical computing (2016-02) (we call it hereafter Rstudio virtual machine).
-- Click **View Instances** until the virtual machine has booted (the instance appears with a green circle). 
+This requires to have previously requested an account at the IFB cloud. 
+
+- Open a connection to the IFB cloud
+
+    - http://cloud.france-bioinformatique.fr/cloud/
+
+- Enter the login and password of your IFB account.
+- Click **New Instance** and select **R statistical computing (2016-02)**.
+
+
+- Click **View Instances** from time to time (e.g. every 20 seconds) until the virtual machine has booted (the instance appears with a green circle). 
 - Click on the **http** link besides the new Rstudio instance. 
 - This opens the Rstudio virtual machine. Enter the login (ruser) and password (ruser).
 

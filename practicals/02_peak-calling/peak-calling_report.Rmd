@@ -172,8 +172,8 @@ bedtools intersect -a Escherichia_coli_K_12_MG1655_windows_200bp.bed \
 We can directly load the data from the web site.
 
 ```{r}
-#url.course <- "~/roscoff_2015/stats_avec_RStudio_EBA15/" # For JvH local test only
-url.course <- "http://jvanheld.github.io/EBA15_stats_RStudio/"
+#url.course <- "~/roscoff_2015/stats_avec_RStudio_EBA/" # For JvH local test only
+url.course <- "http://jvanheld.github.io/stats_avec_RStudio_EBA/"
 url.data <- file.path(url.course, "practicals", "02_peak-calling", "data")
 
 ## Choose a window size (200 or 50)

@@ -1,6 +1,6 @@
 ---
 title: 'Practical: exploring RNA-Seq counts'
-author: "Julie Aubert - Hugo Varet - Jacques van Helden"
+author: "Hugo Varet, Julie Aubert and Jacques van Helden"
 date: '`r Sys.Date()`'
 output:
   slidy_presentation:
@@ -49,10 +49,18 @@ options(width=300)
 knitr::opts_chunk$set(fig.align="center", cache=FALSE)
 ```
 
+# Introduction
+
 ## Context
 
- - Study of 48 WT yeast samples vs 48 Snf2 (KO) samples: Gierliński et al. *Statistical models for RNA-seq data derived from a two-condition 48-replicate experiment*, Bioinformatics, 2015
- - RNA-Seq reads have been cleaned, mapped and counted to generated a count data matrix
+ - Study of 48 WT yeast samples vs 48 Snf2 (KO) samples: Gierliński et al. *Statistical models for RNA-seq data derived from a two-condition 48-replicate experiment*, Bioinformatics, 2015.
+
+ - RNA-Seq reads have been cleaned, mapped and counted to generated a count data matrix.
+
+
+# Generating a unique data table
+
+
 
 ## Loading a data table
 
@@ -63,10 +71,21 @@ knitr::opts_chunk$set(fig.align="center", cache=FALSE)
 data.path <- "http://jvanheld.github.io/stats_avec_RStudio_EBA/practicals/yeast_2x48_replicates/data"
 Snf2 <- read.table(file=paste(data.path, "Snf2_raw.tsv", sep="/"), header=FALSE, row.names=1)
 WT <- read.table(file=paste(data.path, "WT_raw.tsv", sep="/"), header=FALSE, row.names=1)
+
 ## look at the beginning of each dataset:
-print(Snf2[1:4,1:5])
-print(WT[1:4,1:5])
+print(Snf2[1:10,1:5])
+print(WT[1:10,1:5])
 ```
+
+## Checking the content of the count tables
+
+```{r eval=FALSE}
+View(WT)
+
+View(Snf2)
+```
+
+In the View pane, switch back and forth between WT and Snf2 tabs to check the differences.
 
 ## Merging the two matrices (1)
 
@@ -267,3 +286,14 @@ sum(res.edgeR$FDR <= 0.05, na.rm=TRUE)
 ```
 
 What's the behaviour of the number of differentially expressed genes according to the number of samples?
+
+# Supplementary exercises
+
+## Negative control
+
+Exercise: select two random subsets of the same genotype (WT versus WT, or Snf2 versus Snf2) and run the differential analysis as above, with either DESeq2 or edgeR.
+
+- How many genes are declared positive? 
+- Does the histogram of P-values appear flat?
+- How does the volcano plot compare with the WT versus Snf2 result obtained above?
+

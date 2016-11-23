@@ -1,13 +1,13 @@
 ---
-title: 'Practical: basic stats for peak calling'
-author: "Jacques van Helden"
+title: "Stats with R and RStudio"
+author: "Jacques van Helden, Hugo varet and Julie Aubert"
 date: '`r Sys.Date()`'
 output:
   slidy_presentation:
     fig_caption: yes
     fig_height: 6
     fig_width: 7
-    footer: UNAM LCG BEII - Jacques van Helden - Introduction and contents
+    footer: Jacques van Helden - Stats with R and RStudio
     highlight: tango
     incremental: no
     keep_md: no
@@ -21,10 +21,11 @@ output:
     fig_height: 6
     fig_width: 7
     fonttheme: structurebold
-    footer: UNAM LCG BEII - Jacques van Helden - Introduction and contents
+    footer: Jacques van Helden - Stats with R and RStudio
     highlight: tango
     incremental: no
     keep_md: no
+    slide_level: 2
     smaller: yes
     theme: cerulean
     toc: yes
@@ -32,29 +33,43 @@ output:
   beamer_presentation:
     colortheme: dolphin
     fig_caption: yes
-    fig_height: 6
+    fig_height: 5
     fig_width: 7
     fonttheme: structurebold
     highlight: tango
     incremental: no
     keep_tex: no
     slide_level: 2
-    theme: Montpellier
+    theme: Frankfurt
     toc: yes
 font-import: http://fonts.googleapis.com/css?family=Risque
 font-family: Garamond
-address: Lab.Technological Advances for Genomics and Clinics, Inserm Unit U1090
+subtitle: 'Practical: basic stats for peak calling'
+address: TAGC lab, Aix-Marseille Université, France
 transition: linear
 ---
 
-## Peak-calling: Carl's question
 
-<center>![peak-calling question](images/peak-calling_the_question.png)</center>
+```{r setup, include=FALSE, size="huge"}
+library(knitr)
+## Default parameters for displaying the slides
+knitr::opts_chunk$set(echo = TRUE, eval=TRUE, fig.width = 7, fig.height = 5, fig.align = "center", size = "tiny")
+```
 
+# Introduction
+
+## Peak-calling: question
+
+<!--<center>![peak-calling question](images/peak-calling_the_question.png)</center>-->
+
+```{r out.width = "100%", echo=FALSE, fig.cap="**The peak calling question**. Slide from Carl Herrmann. "}
+knitr::include_graphics("images/peak-calling_the_question.png")
+```
+
+# Data loading
 
 ## Defining the data directory
 
-Open a connection to the lab web browser. 
 
 We will first define the URL from which the data can be downloaded, by concatenating the URL fo the course with the path to our dataset.
 
@@ -62,7 +77,8 @@ To concatenate paths, it is *recommended* to use the **R** command `file.path()`
 
 <small>
 ```{r}
-url.course <- "http://jvanheld.github.io/stats_avec_RStudio_EBA/"
+# url.course <- "http://jvanheld.github.io/stats_avec_RStudio_EBA/"
+url.course <- "~/stats_avec_RStudio_EBA/"
 url.data <- file.path(url.course, "practicals", "02_peak-calling", "data")
 ```
 </small>
@@ -106,7 +122,7 @@ head(chip.bedg, n = 5)
 
 ## Checking the n last rows: tail()
 
-The function `tail()` displays the first rows of a table.
+The function `tail()` displays the last rows of a table.
 
 ```{r}
 tail(chip.bedg, n = 5)
@@ -144,12 +160,13 @@ chip.bedg$midpos <- (chip.bedg$start + chip.bedg$end)/2
 head(chip.bedg)
 ```
 
+# Exploring the data with basic plots
 
 ## Plotting a density profile
 
 We can readily print a plot with the counts per window.
 
-```{r}
+```{r fig.width=7, fig.height=4, fig.align="center"}
 plot(chip.bedg[, c("midpos", "counts")], type="h")
 ```
 
@@ -157,10 +174,10 @@ plot(chip.bedg[, c("midpos", "counts")], type="h")
 
 Let us improve the plot
 
-```{r}
+```{r fig.width=7, fig.height=4, fig.align="center"}
 plot(chip.bedg[, c("midpos", "counts")], type="h", 
-     col="green", xlab="Genomic position (200bp windows)", 
-     ylab= "Read counts",
+     col="darkgreen", xlab="Genomic position (200bp bins)", 
+     ylab= "Reads per bin",
      main="FNR ChIP-seq")
 ```
 
@@ -193,38 +210,39 @@ names(input.bedg) <- c("chrom", "start", "end","counts")
 
 ## Solution: plotting the input density profile
 
-```{r}
+```{r fig.width=7, fig.height=4}
 ## Compute middle positions per window
 input.bedg$midpos <- (input.bedg$start + input.bedg$end)/2
 
 plot(input.bedg[, c("midpos", "counts")], type="h", 
-     col="red", xlab="Genomic position (200bp windows)", 
+     col="red", xlab="Genomic position (200bp bins)", 
      ylab= "Read counts",
      main="Background (genomic input)")
 ```
 
+Does the background look homogeneous? How do you interpret its shape?
+
 ## Solution: comparing chip-seq and background density profiles
 
-```{r}
+```{r fig.width=7, fig.height=8}
 par(mfrow=c(2,1)) ## Draw two panels on top of each other
 plot(chip.bedg[, c("midpos", "counts")], type="h", 
-     col="green", xlab="Genomic position (200bp windows)", 
-     ylab= "Read counts",
+     col="darkgreen", xlab="Genomic position (200bp bins)", 
+     ylab= "Reads per bin",
      main="FNR ChIP-seq")
 plot(input.bedg[, c("midpos", "counts")], type="h", 
-     col="red", xlab="Genomic position (200bp windows)", 
-     ylab= "Read counts",
+     col="red", xlab="Genomic position (200bp bins)", 
+     ylab= "Reads per bin",
      main="Background (genomic input)")
 par(mfrow=c(1,1)) ## Reset default mode
-
 ```
 
 ## Solution: comparing counts per window between chip-seq and input
 
-```{r}
+```{r fig.width=7, fig.height=7, fig.align="center"}
 plot(input.bedg$counts, chip.bedg$counts, col="darkviolet",
      xlab="Genomic input", ylab="FNR ChIP-seq",
-     main="Read counts per 200bp window")
+     main="Reads per 200bp bin")
 ```
 
 ## Solution: comparing counts per window between chip-seq and input
@@ -234,7 +252,7 @@ In order to better highight the dynamic range, we can use a log-based representa
 ```{r}
 plot(input.bedg$counts, chip.bedg$counts, col="darkviolet",
      xlab="Genomic input", ylab="FNR ChIP-seq",
-     main="Read counts per 200bp window",
+     main="Reads per 200bp bin",
      log="xy")
 grid() ## add a grid
 ```
@@ -248,4 +266,177 @@ grid() ## add a grid
 
 1. Think about further drawing modes to improve your perception of the differences between signal and background.
 2. We will formulate (together) a reasoning path to compute a p-value for each peak.
+
+
+# Step-by-step walk to the significance
+
+
+## Merge the two tables
+
+```{r}
+names(input.bedg)
+
+## Merge two tables by identical values for multiple columns
+count.table <- merge(chip.bedg, input.bedg, by=c("chrom", "start", "end", "midpos"), suffixes=c(".chip", ".input"))
+
+## Check the result size
+names(count.table)
+```
+
+## Checking the merge() result
+
+```{r}
+## Simplify the chromosome name
+head(count.table$chrom)
+count.table$chrom <- "NC_000913.2"
+kable(head(count.table)) ## Display the head of the table in a 
+```
+
+## ChIP vs input counts per bin
+
+```{r fig.width=7, fig.height=7}
+max.counts <- max(count.table[, c("counts.input", "counts.chip")])
+plot(x = count.table$counts.input, xlab="Input counts",
+     y = count.table$counts.chip, ylab="ChIP counts",
+     main="ChIP versus input counts",
+     col="darkviolet", panel.first=grid())
+```
+
+Note the differences of $X$ and $Y$ scales!
+
+## ChIP vs input counts per bin - log scales
+
+Log scales better emphasize the dynamic range of the counts. 
+
+```{r fig.width=7, fig.height=7}
+plot(x = count.table$counts.input, xlab="Input counts per bin",
+     y = count.table$counts.chip, ylab="ChIP counts per bin",
+     main="ChIP versus input counts (log scale)",
+     col="darkviolet", panel.first=grid(), log="xy")
+```
+
+Read the warnings. What happened?
+
+## A tricky way to treat 0 values on log scales
+
+- We can add a pseudo-count to avoid -Inf with 0 values.
+- The usual pseudo-count is 1. I prefer 0.01 (this could be negotiated).
+
+```{r fig.width=7, fig.height=7}
+epsilon <- 0.1 ## Define a small pseudo-count
+plot(x = count.table$counts.input + epsilon, 
+     y = count.table$counts.chip + epsilon, 
+     col="darkviolet", panel.first=grid(), log="xy")
+```
+
+## Drawing a diagonal
+
+```{r fig.width=7, fig.height=7}
+plot(x = count.table$counts.input + epsilon, xlab=paste("Input counts +", epsilon),
+     y = count.table$counts.chip + epsilon,  ylab=paste("ChIP counts +", epsilon),
+     col="darkviolet", panel.first=grid(), log="xy")
+abline(a=0, b=1)
+```
+
+Note: most points are much below the diagonal. Why?
+
+## ChIP/input ratios
+
+```{r}
+count.table$ratio <- (count.table$counts.chip + 1) / (count.table$counts.input + 1)
+
+hist(count.table$ratio)
+```
+
+The basic histogram is quite ugly. Let us fix this. 
+
+## Ratio histogram with more breaks
+
+```{r}
+hist(count.table$ratio, breaks=100)
+```
+
+Still very packed. 
+
+## Ratio histogram with even more breaks
+
+```{r}
+hist(count.table$ratio, breaks=1000)
+```
+
+A bit better but the X axis is too extended, due to outliers. 
+
+## Ratio histogram with truncated X axis
+
+Let us truncate the X axis (and make it explicit on X axis label).
+
+```{r fig.width=7, fig.height=4}
+count.table$log2.ratio <- log2(count.table$ratio)
+hist(count.table$log2.ratio, breaks = 200, xlim=c(-5,5), col="gray", xlab="Count ratios (truncated scale)")
+```
+
+*Question: what is this "needle" at $X=0$?*
+
+## Checking library sizes
+
+We visibly have a problem: almost all log2 ratios are $\ll$ 0. 
+Why ? Check library sizes. 
+
+```{r}
+sum(count.table$counts.chip)
+sum(count.table$counts.input)
+```
+
+
+## Count scaling
+
+The simplest way to "normalize" is to scale input counts by library sum.
+
+```{r fig.width=7, fig.height=5, fig.align="center"}
+## Normalize input counts by library sizes
+count.table$input.scaled.libsize <- count.table$counts.input * sum(count.table$counts.chip)/sum(count.table$counts.input)
+
+plot(x = count.table$input.scaled.libsize + 1, 
+     y = count.table$counts.chip + 1, col="darkviolet", log="xy",
+     main="ChIP versus input",
+     xlab="Scaled input counts",
+     ylab="ChIP counts")
+grid()
+abline(a=0, b=1, col="black")
+```
+
+
+## Log-ratios
+
+```{r}
+count.table$scaled.ratio.libsum <- (count.table$counts.chip + epsilon ) / (count.table$input.scaled.libsize + epsilon)
+
+hist(count.table$scaled.ratio.libsum, breaks=2000, xlim=c(0, 5), xlab="Count ratios after libsum scaling", main="Count ratio histogram")
+abline(v=mean(count.table$scaled.ratio.libsum), col="darkgreen", lwd=3, lty="dashed")
+abline(v=median(count.table$scaled.ratio.libsum), col="brown", lwd=3)
+legend("topright", c("mean", "median"), col=c("darkgreen", "brown"), lwd=3)
+
+## Print the mean and median scaled ratios
+mean(count.table$scaled.ratio.libsum)
+median(count.table$scaled.ratio.libsum)
+```
+
+## Input normalization by median
+
+Why? the median is very robust to outliers (to be discussed during the course).
+
+```{r fig.width=7, fig.height=5, fig.align="center"}
+## Normalize input counts by median count
+count.table$input.scaled.median <- count.table$counts.input * median(count.table$counts.chip)/median(count.table$counts.input)
+
+hist(count.table$input.scaled.median, breaks=2000, xlim=c(0, 5), xlab="Count ratios after libsum scaling", main="Count ratio histogram")
+abline(v=mean(count.table$scaled.ratio.median), col="darkgreen", lwd=3, lty="dashed")
+abline(v=median(count.table$scaled.ratio.median), col="brown", lwd=3)
+legend("topright", c("mean", "median"), col=c("darkgreen", "brown"), lwd=3)
+
+## Print the mean and median scaled ratios
+mean(count.table$scaled.ratio.median)
+median(count.table$scaled.ratio.median)
+```
+
 
