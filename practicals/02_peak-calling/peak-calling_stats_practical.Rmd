@@ -77,8 +77,7 @@ To concatenate paths, it is *recommended* to use the **R** command `file.path()`
 
 <small>
 ```{r}
-# url.course <- "http://jvanheld.github.io/stats_avec_RStudio_EBA/"
-url.course <- "~/stats_avec_RStudio_EBA/"
+url.course <- "http://jvanheld.github.io/stats_avec_RStudio_EBA/"
 url.data <- file.path(url.course, "practicals", "02_peak-calling", "data")
 ```
 </small>
