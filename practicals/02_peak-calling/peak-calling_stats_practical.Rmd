@@ -3,15 +3,14 @@ title: "Stats with R and RStudio"
 author: "Jacques van Helden, Hugo varet and Julie Aubert"
 date: '`r Sys.Date()`'
 output:
-  ioslides_presentation:
-    colortheme: dolphin
+  slidy_presentation:
     fig_caption: yes
     fig_height: 6
     fig_width: 7
-    fonttheme: structurebold
     footer: Jacques van Helden - Stats with R and RStudio
     highlight: tango
-    slide_level: 2
+    incremental: no
+    keep_md: no
     smaller: yes
     theme: cerulean
     toc: yes
@@ -23,14 +22,15 @@ output:
     toc: yes
     toc_depth: 3
     toc_float: yes
-  slidy_presentation:
+  ioslides_presentation:
+    colortheme: dolphin
     fig_caption: yes
     fig_height: 6
     fig_width: 7
+    fonttheme: structurebold
     footer: Jacques van Helden - Stats with R and RStudio
     highlight: tango
-    incremental: no
-    keep_md: no
+    slide_level: 2
     smaller: yes
     theme: cerulean
     toc: yes
@@ -98,7 +98,7 @@ url.data <- file.path(url.course, "practicals", "02_peak-calling", "data")
 
 **R** enables to download data directly from the Web. 
 
-Load counts per window in chip sample.
+Load counts per bin in chip sample.
 
 
 
@@ -174,7 +174,7 @@ head(chip.bedg)
 
 ## Plotting a density profile
 
-We can readily print a plot with the counts per window.
+We can readily print a plot with the counts per bin.
 
 ```{r fig.width=7, fig.height=4, fig.align="center"}
 plot(chip.bedg[, c("midpos", "counts")], type="h")
@@ -194,17 +194,17 @@ plot(chip.bedg[, c("midpos", "counts")], type="h",
 
 ## Exercise: exploring the background
 
-We already loaded the count table for the FNR ChIP counts per window. 
+We already loaded the count table for the FNR ChIP counts per bin. 
 
-The background level will be estimated by loading counts per window in a genomic input sample.
+The background level will be estimated by loading counts per bin in a genomic input sample.
 These counts are available in the same directory a file named `input_200bp.bedg`
 
-1. Load the counts per window in the input sample (genome sequencing).
+1. Load the counts per bin in the input sample (genome sequencing).
 2. Plot the density profile of the input
 3. Compare  chip-seq and input density profiles
-4. Compare counts per window between chip-seq and input
+4. Compare counts per bin between chip-seq and input
 
-## Solution: loading the input counts per window
+## Solution: loading the input counts per bin
 
 ```{r}
 ## Define URL of the input file
@@ -221,7 +221,7 @@ names(input.bedg) <- c("chrom", "start", "end","counts")
 ## Solution: plotting the input density profile
 
 ```{r fig.width=7, fig.height=4}
-## Compute middle positions per window
+## Compute middle positions per bin
 input.bedg$midpos <- (input.bedg$start + input.bedg$end)/2
 
 plot(input.bedg[, c("midpos", "counts")], type="h", 
@@ -247,7 +247,7 @@ plot(input.bedg[, c("midpos", "counts")], type="h",
 par(mfrow=c(1,1)) ## Reset default mode
 ```
 
-## Solution: comparing counts per window between chip-seq and input
+## Solution: comparing counts per bin between chip-seq and input
 
 ```{r fig.width=7, fig.height=7, fig.align="center"}
 plot(input.bedg$counts, chip.bedg$counts, col="darkviolet",
@@ -255,11 +255,11 @@ plot(input.bedg$counts, chip.bedg$counts, col="darkviolet",
      main="Reads per 200bp bin")
 ```
 
-## Solution: comparing counts per window between chip-seq and input
+## Solution: comparing counts per bin between chip-seq and input
 
 In order to better highight the dynamic range, we can use a log-based representation
 
-```{r}
+```{r fig.width=7, fig.height=7, fig.align="center"}
 plot(input.bedg$counts, chip.bedg$counts, col="darkviolet",
      xlab="Genomic input", ylab="FNR ChIP-seq",
      main="Reads per 200bp bin",
@@ -352,7 +352,7 @@ Note: most points are much below the diagonal. Why?
 
 ## ChIP/input ratios
 
-```{r}
+```{r fig.width=7, fig.height=4, fig.align="center"}
 count.table$ratio <- (count.table$counts.chip + 1) / (count.table$counts.input + 1)
 
 hist(count.table$ratio)
@@ -362,7 +362,7 @@ The basic histogram is quite ugly. Let us fix this.
 
 ## Ratio histogram with more breaks
 
-```{r}
+```{r fig.width=7, fig.height=4, fig.align="center"}
 hist(count.table$ratio, breaks=100)
 ```
 
@@ -370,7 +370,7 @@ Still very packed.
 
 ## Ratio histogram with even more breaks
 
-```{r}
+```{r fig.width=7, fig.height=4, fig.align="center"}
 hist(count.table$ratio, breaks=1000)
 ```
 
@@ -418,13 +418,13 @@ abline(a=0, b=1, col="black")
 
 ## Log-ratios
 
-```{r}
+```{r fig.width=7, fig.height=4, fig.align="center"}
 count.table$scaled.ratio.libsum <- (count.table$counts.chip + epsilon ) / (count.table$input.scaled.libsize + epsilon)
 
-hist(count.table$scaled.ratio.libsum, breaks=2000, xlim=c(0, 5), xlab="Count ratios after libsum scaling", main="Count ratio histogram")
-abline(v=mean(count.table$scaled.ratio.libsum), col="darkgreen", lwd=3, lty="dashed")
-abline(v=median(count.table$scaled.ratio.libsum), col="brown", lwd=3)
-legend("topright", c("mean", "median"), col=c("darkgreen", "brown"), lwd=3)
+hist(count.table$scaled.ratio.libsum, breaks=2000, xlim=c(0, 5), xlab="Count ratios after libsum scaling", main="Count ratio histogram", col="gray", border="gray")
+abline(v=mean(count.table$scaled.ratio.libsum), col="darkgreen", lwd=3)
+abline(v=median(count.table$scaled.ratio.libsum), col="brown", lwd=3, lty="dotted")
+legend("topright", c("mean", "median"), col=c("darkgreen", "brown"), lwd=3, lty=c("solid", "dotted"))
 
 ## Print the mean and median scaled ratios
 mean(count.table$scaled.ratio.libsum)
@@ -448,18 +448,154 @@ summary(count.table[, c("counts.chip", "counts.input")])
 
 Why? the median is very robust to outliers (to be discussed during the course).
 
-```{r fig.width=7, fig.height=5, fig.align="center"}
+```{r}
 ## Normalize input counts by median count
 count.table$input.scaled.median <- count.table$counts.input * median(count.table$counts.chip)/median(count.table$counts.input)
 
-hist(count.table$input.scaled.median, breaks=2000, xlim=c(-5, 5), xlab="Count ratios after libsum scaling", main="Count ratio histogram")
-abline(v=mean(count.table$scaled.ratio.median), col="darkgreen", lwd=3, lty="dashed")
-abline(v=median(count.table$scaled.ratio.median), col="brown", lwd=3)
-legend("topright", c("mean", "median"), col=c("darkgreen", "brown"), lwd=3)
+count.table$scaled.ratio.median <- (count.table$counts.chip + epsilon ) / (count.table$input.scaled.median + epsilon)
 
 ## Print the mean and median scaled ratios
 mean(count.table$scaled.ratio.median)
 median(count.table$scaled.ratio.median)
 ```
 
+## Count ratio distribution after median scaling
+
+```{r fig.width=7, fig.height=5, fig.align="center"}
+hist(count.table$scaled.ratio.median, breaks=2000, xlim=c(0, 5), xlab="Count ratios after median scaling", main="Count ratio histogram", col="gray", border="gray")
+abline(v=mean(count.table$scaled.ratio.median), col="darkgreen", lwd=3)
+abline(v=median(count.table$scaled.ratio.median), col="brown", lwd=3, lty="dotted")
+legend("topright", c("mean", "median"), col=c("darkgreen", "brown"), lwd=3, lty=c("solid", "dotted"))
+```
+
+## Log2 fold changes
+
+After having normalized the counts, we can use a log2 transformation. 
+
+```{r log2.ratios}
+## Add a column with log2-ratios to the count table
+count.table$log2.ratios <- log2(count.table$scaled.ratio.median)
+```
+
+- the distribution becomes symmetrical
+- The milestone ratio of 1 ("neutral" bins) becomes 0 after log transformation. 
+- Positive values: bins enriched in the ChIP sample
+
+    - $log2(r) = x \iff r = 2^x$
+    - Two-fold enrichment: $log2(r) = 1 \iff r = 2$
+    - Four-fold enrichment: $log2(r) = 2 \iff r = 4$
+
+- Negative values: bins enriched in the ChIP sample
+
+    - $log2(r) = -x \iff r = 1/2^x$
+    - Two-fold empoverishment: $log2(r) = -1 \iff r = 1/2$
+    - Four-fold empoverishment: $log2(r) = -2 \iff r = 1/4$
+
+
+
+## Ratios versus log2(ratios)
+
+```{r fig.width=10, fig.height=4, fig.align="center"}
+par(mfrow=c(1,2))
+
+## Plot ratio distribution
+hist(count.table$scaled.ratio.median, breaks=2000, xlim=c(0, 5), xlab="Count ratios after median scaling", main="Count ratio histogram", col="gray", border="gray")
+abline(v=mean(count.table$scaled.ratio.median), col="darkgreen", lwd=3)
+abline(v=median(count.table$scaled.ratio.median), col="brown", lwd=3, lty="dotted")
+legend("topright", c("mean", "median"), col=c("darkgreen", "brown"), lwd=3, lty=c("solid", "dotted"))
+
+## Plot log2-ratio distribution
+hist(count.table$log2.ratios, breaks=100, xlim=c(-5, 5), xlab="log2(ChIP/input)", 
+     main="log2(count ratios)", col="gray", border="gray")
+abline(v=mean(count.table$log2.ratios), col="darkgreen", lwd=3)
+abline(v=median(count.table$log2.ratios), col="brown", lwd=3, lty="dotted")
+legend("topright", c("mean", "median"), col=c("darkgreen", "brown"), lwd=3, lty=c("solid", "dotted"))
+```
+
+<!--
+
+## MA plot
+
+The so-called **MA plots** became popular with microarrays. 
+
+- **M** 
+
+    - symbolizes the log2(ratio), as computed above: $M = log2(\text{chip}/\text{input})$
+    - indicates the level of count enrichment for the ChIP sample
+    
+- **A** 
+
+    - stands for averaged log2 counts: $A = \frac{1}{2}(log2(chip) + log2{input})$
+    - quantifies the reads associated to this bin across all samples (ChIP and input)
+
+
+```{r MA_plot}
+count.table$M <- 1/2*(log2(count.table$counts.chip + epsilon) + log2(count.table$input.scaled.median + epsilon))
+
+plot(count.table$M, count.table$log2.ratio)
+```
+-->
+
+## Computing the p-value
+
+The median-scaled input counts per bin indicate the local background level, which reflects position-specific differences of DNA accessibilty to the sequencing. 
+
+MACS relies on a local background model to estimate the expectation ($\lambda$ parameter) of a Poisson distribution. MACS uses 3 distinct window widths to estimate narrower or wider local backgrounds. This is relatively simple to compute, but for this tutorial we will apply an even simpler approach: use scaled input counts of each bin as local estimate of $\lambda$.
+
+We can thus directly calculate the Poisson p-value. 
+
+```{r}
+count.table$pvalue <- ppois(
+  q=count.table$counts.chip, 
+  lambda = count.table$input.scaled.median, lower.tail = FALSE)
+```
+
+## P-value histogram
+
+We computed a p-value for each bin separately. Before going further, it is always informative to get a  sketch of the distribution of all the p-values in our dataset. This can be achieved with a p-value histogram. 
+
+```{r fig.width=7, fig.height=4, fig.align="center"}
+hist(count.table$pvalue, breaks=20, col="grey")
+```
+
+To be discussed: 
+
+- under the null hypothesis, what would be the expected shape for a p-value distribution ?
+- what do we see in the p-value range from 0 to 0.05 ?
+- what do we see in the p-value range from 0.95 to 1.00 ?
+
+
+## P-value profile
+
+By definition, P-values are comprised between 0 and 1. 
+
+However, we are only interested by very low values. For graphical purposes, what is relevant is not to perceive differences between 0.20, 0.50 or 0.90 (all these high p-values indicate that the result is not significant), but by very small p-values, e.g. $10^{-2}$,  $10^{-5}$ or  $10^{-300}$.  
+
+For this, p-values are usually represented on a logarithmic scale. Alternatively, p-values can be converted to -log10(p-value). 
+
+
+```{r fig.width=7, fig.height=8}
+par(mfrow=c(3,1))
+par(mar=c(2,4,0.5,0.5))
+plot(count.table$midpos, count.table$counts.chip, type='h', col="darkgreen", xlab="", ylab="counts")
+plot(count.table$midpos, -log10(count.table$pvalue), type='h', col="grey", xlab="", ylab="-log10(p-value)")
+par(mfrow=c(1,1))
+```
+
+
+## Having a look at the full result table
+
+```{r eval=FALSE}
+View(count.table)
+```
+
+
+## Before finishing -- keep track of your session
+
+Tractability is an important issue in sciences. Since R and its libraries are evolving very fast, it is important to keep track of the full list of libraries used to produce a result, with the precise version of each library.  This can be done automatically with the ***R*** function `sessionInfo()`. 
+
+```{r sessioninfo}
+## Print the complete list of libraries + versions used in this session
+sessionInfo()
+```
 
