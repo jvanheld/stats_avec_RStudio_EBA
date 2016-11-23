@@ -545,16 +545,29 @@ MACS relies on a local background model to estimate the expectation ($\lambda$ p
 We can thus directly calculate the Poisson p-value. 
 
 ```{r}
-count.table$pvalue <- ppois(q=count.table$counts.input, lambda = count.table$input.scaled.median, lower.tail = FALSE)
+count.table$pvalue <- ppois(
+  q=count.table$counts.chip, 
+  lambda = count.table$input.scaled.median, lower.tail = FALSE)
 ```
 
 ## P-value profile
 
 ```{r fig.width=7, fig.height=8}
-par(mfrow=c(2,1))
-plot(count.table$midpos, count.table$counts.chip)
+par(mfrow=c(3,1))
+par(mar=c(2,4,0.5,0.5))
+plot(count.table$midpos, count.table$counts.chip, type='h', col="darkgreen", xlab="", ylab="counts")
+plot(count.table$midpos, count.table$pvalue, type='h', col="grey", xlab="", ylab="p-value")
+plot(count.table$midpos, -log10(count.table$pvalue), type='h', col="grey", xlab="", ylab="-log10(p-value)")
 par(mfrow=c(1,1))
 ```
+
+
+## Having a look at the full result table
+
+```{r eval=FALSE}
+View(count.table)
+```
+
 
 ## Before finishing -- keep track of your session
 
