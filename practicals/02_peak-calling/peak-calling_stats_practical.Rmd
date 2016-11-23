@@ -3,6 +3,25 @@ title: "Stats with R and RStudio"
 author: "Jacques van Helden, Hugo varet and Julie Aubert"
 date: '`r Sys.Date()`'
 output:
+  beamer_presentation:
+    colortheme: dolphin
+    fig_caption: yes
+    fig_height: 5
+    fig_width: 7
+    fonttheme: structurebold
+    highlight: tango
+    incremental: no
+    keep_tex: no
+    slide_level: 2
+    theme: Frankfurt
+    toc: yes
+  html_document:
+    fig_caption: yes
+    highlight: zenburn
+    theme: cerulean
+    toc: yes
+    toc_depth: 3
+    toc_float: yes
   ioslides_presentation:
     colortheme: dolphin
     fig_caption: yes
@@ -16,13 +35,11 @@ output:
     theme: cerulean
     toc: yes
     widescreen: yes
-  html_document:
+  pdf_document:
     fig_caption: yes
     highlight: zenburn
-    theme: cerulean
     toc: yes
     toc_depth: 3
-    toc_float: yes
   slidy_presentation:
     fig_caption: yes
     fig_height: 6
@@ -35,23 +52,6 @@ output:
     theme: cerulean
     toc: yes
     widescreen: yes
-  pdf_document:
-    fig_caption: yes
-    highlight: zenburn
-    toc: yes
-    toc_depth: 3
-  beamer_presentation:
-    colortheme: dolphin
-    fig_caption: yes
-    fig_height: 5
-    fig_width: 7
-    fonttheme: structurebold
-    highlight: tango
-    incremental: no
-    keep_tex: no
-    slide_level: 2
-    theme: Frankfurt
-    toc: yes
   word_document: default
 font-import: http://fonts.googleapis.com/css?family=Risque
 font-family: Garamond
@@ -98,7 +98,7 @@ url.data <- file.path(url.course, "practicals", "02_peak-calling", "data")
 
 **R** enables to download data directly from the Web. 
 
-Load counts per window in chip sample.
+Load counts per bin in chip sample.
 
 
 
@@ -174,7 +174,7 @@ head(chip.bedg)
 
 ## Plotting a density profile
 
-We can readily print a plot with the counts per window.
+We can readily print a plot with the counts per bin.
 
 ```{r fig.width=7, fig.height=4, fig.align="center"}
 plot(chip.bedg[, c("midpos", "counts")], type="h")
@@ -194,17 +194,17 @@ plot(chip.bedg[, c("midpos", "counts")], type="h",
 
 ## Exercise: exploring the background
 
-We already loaded the count table for the FNR ChIP counts per window. 
+We already loaded the count table for the FNR ChIP counts per bin. 
 
-The background level will be estimated by loading counts per window in a genomic input sample.
+The background level will be estimated by loading counts per bin in a genomic input sample.
 These counts are available in the same directory a file named `input_200bp.bedg`
 
-1. Load the counts per window in the input sample (genome sequencing).
+1. Load the counts per bin in the input sample (genome sequencing).
 2. Plot the density profile of the input
 3. Compare  chip-seq and input density profiles
-4. Compare counts per window between chip-seq and input
+4. Compare counts per bin between chip-seq and input
 
-## Solution: loading the input counts per window
+## Solution: loading the input counts per bin
 
 ```{r}
 ## Define URL of the input file
@@ -221,7 +221,7 @@ names(input.bedg) <- c("chrom", "start", "end","counts")
 ## Solution: plotting the input density profile
 
 ```{r fig.width=7, fig.height=4}
-## Compute middle positions per window
+## Compute middle positions per bin
 input.bedg$midpos <- (input.bedg$start + input.bedg$end)/2
 
 plot(input.bedg[, c("midpos", "counts")], type="h", 
@@ -247,7 +247,7 @@ plot(input.bedg[, c("midpos", "counts")], type="h",
 par(mfrow=c(1,1)) ## Reset default mode
 ```
 
-## Solution: comparing counts per window between chip-seq and input
+## Solution: comparing counts per bin between chip-seq and input
 
 ```{r fig.width=7, fig.height=7, fig.align="center"}
 plot(input.bedg$counts, chip.bedg$counts, col="darkviolet",
@@ -255,7 +255,7 @@ plot(input.bedg$counts, chip.bedg$counts, col="darkviolet",
      main="Reads per 200bp bin")
 ```
 
-## Solution: comparing counts per window between chip-seq and input
+## Solution: comparing counts per bin between chip-seq and input
 
 In order to better highight the dynamic range, we can use a log-based representation
 
@@ -421,10 +421,10 @@ abline(a=0, b=1, col="black")
 ```{r}
 count.table$scaled.ratio.libsum <- (count.table$counts.chip + epsilon ) / (count.table$input.scaled.libsize + epsilon)
 
-hist(count.table$scaled.ratio.libsum, breaks=2000, xlim=c(0, 5), xlab="Count ratios after libsum scaling", main="Count ratio histogram")
-abline(v=mean(count.table$scaled.ratio.libsum), col="darkgreen", lwd=3, lty="dashed")
-abline(v=median(count.table$scaled.ratio.libsum), col="brown", lwd=3)
-legend("topright", c("mean", "median"), col=c("darkgreen", "brown"), lwd=3)
+hist(count.table$scaled.ratio.libsum, breaks=2000, xlim=c(0, 5), xlab="Count ratios after libsum scaling", main="Count ratio histogram", col="gray", border="gray")
+abline(v=mean(count.table$scaled.ratio.libsum), col="darkgreen", lwd=3)
+abline(v=median(count.table$scaled.ratio.libsum), col="brown", lwd=3, lty="dotted")
+legend("topright", c("mean", "median"), col=c("darkgreen", "brown"), lwd=3, lty=c("solid", "dotted"))
 
 ## Print the mean and median scaled ratios
 mean(count.table$scaled.ratio.libsum)
@@ -448,18 +448,26 @@ summary(count.table[, c("counts.chip", "counts.input")])
 
 Why? the median is very robust to outliers (to be discussed during the course).
 
-```{r fig.width=7, fig.height=5, fig.align="center"}
+```{r}
 ## Normalize input counts by median count
 count.table$input.scaled.median <- count.table$counts.input * median(count.table$counts.chip)/median(count.table$counts.input)
 
-hist(count.table$input.scaled.median, breaks=2000, xlim=c(-5, 5), xlab="Count ratios after libsum scaling", main="Count ratio histogram")
-abline(v=mean(count.table$scaled.ratio.median), col="darkgreen", lwd=3, lty="dashed")
-abline(v=median(count.table$scaled.ratio.median), col="brown", lwd=3)
-legend("topright", c("mean", "median"), col=c("darkgreen", "brown"), lwd=3)
+count.table$scaled.ratio.median <- (count.table$counts.chip + epsilon ) / (count.table$input.scaled.median + epsilon)
 
 ## Print the mean and median scaled ratios
 mean(count.table$scaled.ratio.median)
 median(count.table$scaled.ratio.median)
+
+```
+
+## Count ratio distribution after median scaling
+
+```{r fig.width=7, fig.height=5, fig.align="center"}
+hist(count.table$scaled.ratio.median, breaks=2000, xlim=c(0, 5), xlab="Count ratios after median scaling", main="Count ratio histogram", col="gray", border="gray")
+abline(v=mean(count.table$scaled.ratio.median), col="darkgreen", lwd=3)
+abline(v=median(count.table$scaled.ratio.median), col="brown", lwd=3, lty="dotted")
+legend("topright", c("mean", "median"), col=c("darkgreen", "brown"), lwd=3, lty=c("solid", "dotted"))
+
 ```
 
 
