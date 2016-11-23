@@ -3,18 +3,18 @@ title: "Stats with R and RStudio"
 author: "Jacques van Helden, Hugo varet and Julie Aubert"
 date: '`r Sys.Date()`'
 output:
-  beamer_presentation:
-    colortheme: dolphin
+  slidy_presentation:
     fig_caption: yes
-    fig_height: 5
+    fig_height: 6
     fig_width: 7
-    fonttheme: structurebold
+    footer: Jacques van Helden - Stats with R and RStudio
     highlight: tango
     incremental: no
-    keep_tex: no
-    slide_level: 2
-    theme: Frankfurt
+    keep_md: no
+    smaller: yes
+    theme: cerulean
     toc: yes
+    widescreen: yes
   html_document:
     fig_caption: yes
     highlight: zenburn
@@ -40,18 +40,18 @@ output:
     highlight: zenburn
     toc: yes
     toc_depth: 3
-  slidy_presentation:
+  beamer_presentation:
+    colortheme: dolphin
     fig_caption: yes
-    fig_height: 6
+    fig_height: 5
     fig_width: 7
-    footer: Jacques van Helden - Stats with R and RStudio
+    fonttheme: structurebold
     highlight: tango
     incremental: no
-    keep_md: no
-    smaller: yes
-    theme: cerulean
+    keep_tex: no
+    slide_level: 2
+    theme: Frankfurt
     toc: yes
-    widescreen: yes
   word_document: default
 font-import: http://fonts.googleapis.com/css?family=Risque
 font-family: Garamond
@@ -457,7 +457,6 @@ count.table$scaled.ratio.median <- (count.table$counts.chip + epsilon ) / (count
 ## Print the mean and median scaled ratios
 mean(count.table$scaled.ratio.median)
 median(count.table$scaled.ratio.median)
-
 ```
 
 ## Count ratio distribution after median scaling
@@ -467,7 +466,118 @@ hist(count.table$scaled.ratio.median, breaks=2000, xlim=c(0, 5), xlab="Count rat
 abline(v=mean(count.table$scaled.ratio.median), col="darkgreen", lwd=3)
 abline(v=median(count.table$scaled.ratio.median), col="brown", lwd=3, lty="dotted")
 legend("topright", c("mean", "median"), col=c("darkgreen", "brown"), lwd=3, lty=c("solid", "dotted"))
-
 ```
+
+## Log2 fold changes
+
+After having normalized the counts, we can use a log2 transformation. 
+
+```{r log2.ratios}
+## Add a column with log2-ratios to the count table
+count.table$log2.ratios <- log2(count.table$scaled.ratio.median)
+```
+
+- the distribution becomes symmetrical
+- The milestone ratio of 1 ("neutral" bins) becomes 0 after log transformation. 
+- Positive values: bins enriched in the ChIP sample
+
+    - $log2(r) = x \iff r = 2^x$
+    - Two-fold enrichment: $log2(r) = 1 \iff r = 2$
+    - Four-fold enrichment: $log2(r) = 2 \iff r = 4$
+
+- Negative values: bins enriched in the ChIP sample
+
+    - $log2(r) = -x \iff r = 1/2^x$
+    - Two-fold empoverishment: $log2(r) = -1 \iff r = 1/2$
+    - Four-fold empoverishment: $log2(r) = -2 \iff r = 1/4$
+
+
+
+## Ratios versus log2(ratios)
+
+```{r fig.width=10, fig.height=4, fig.align="center"}
+par(mfrow=c(1,2))
+
+## Plot ratio distribution
+hist(count.table$scaled.ratio.median, breaks=2000, xlim=c(0, 5), xlab="Count ratios after median scaling", main="Count ratio histogram", col="gray", border="gray")
+abline(v=mean(count.table$scaled.ratio.median), col="darkgreen", lwd=3)
+abline(v=median(count.table$scaled.ratio.median), col="brown", lwd=3, lty="dotted")
+legend("topright", c("mean", "median"), col=c("darkgreen", "brown"), lwd=3, lty=c("solid", "dotted"))
+
+## Plot log2-ratio distribution
+hist(count.table$log2.ratios, breaks=100, xlim=c(-5, 5), xlab="log2(ChIP/input)", 
+     main="log2(count ratios)", col="gray", border="gray")
+abline(v=mean(count.table$log2.ratios), col="darkgreen", lwd=3)
+abline(v=median(count.table$log2.ratios), col="brown", lwd=3, lty="dotted")
+legend("topright", c("mean", "median"), col=c("darkgreen", "brown"), lwd=3, lty=c("solid", "dotted"))
+```
+
+<!--
+
+## MA plot
+
+The so-called **MA plots** became popular with microarrays. 
+
+- **M** 
+
+    - symbolizes the log2(ratio), as computed above: $M = log2(\text{chip}/\text{input})$
+    - indicates the level of count enrichment for the ChIP sample
+    
+- **A** 
+
+    - stands for averaged log2 counts: $A = \frac{1}{2}(log2(chip) + log2{input})$
+    - quantifies the reads associated to this bin across all samples (ChIP and input)
+
+
+```{r MA_plot}
+count.table$M <- 1/2*(log2(count.table$counts.chip + epsilon) + log2(count.table$input.scaled.median + epsilon))
+
+plot(count.table$M, count.table$log2.ratio)
+```
+-->
+
+## Computing the p-value
+
+The median-scaled input counts per bin indicate the local background level, which reflects position-specific differences of DNA accessibilty to the sequencing. 
+
+MACS relies on a local background model to estimate the expectation ($\lambda$ parameter) of a Poisson distribution. MACS uses 3 distinct window widths to estimate narrower or wider local backgrounds. This is relatively simple to compute, but for this tutorial we will apply an even simpler approach: use scaled input counts of each bin as local estimate of $\lambda$.
+
+We can thus directly calculate the Poisson p-value. 
+
+```{r}
+count.table$pvalue <- ppois(q=count.table$counts.input, lambda = count.table$input.scaled.median, lower.tail = FALSE)
+```
+
+## P-value profile
+
+```{r fig.width=7, fig.height=8}
+par(mfrow=c(2,1))
+plot(count.table$midpos, count.table$counts.chip)
+par(mfrow=c(1,1))
+```
+
+## Before finishing -- keep track of your session
+
+Tractability is an important issue in sciences. Since R and its libraries are evolving very fast, it is important to keep track of the full list of libraries used to produce a result, with the precise version of each library.  This can be done automatically with the ***R*** function `sessionInfo()`. 
+
+```{r sessioninfo}
+## Print the complete list of libraries + versions used in this session
+sessionInfo()
+```
+
+
+<!--
+
+```{r eval=TRUE, echo=FALSE}
+################################################################
+## Extract the code of this markdown file
+this.folder <- "~/stats_avec_RStudio_EBA/practicals/02_peak-calling/"
+setwd(this.folder)
+md.file <- "peak-calling_stats_practical.Rmd"
+purl(md.file)
+```
+-->
+
+
 
 
