@@ -259,7 +259,7 @@ plot(input.bedg$counts, chip.bedg$counts, col="darkviolet",
 
 In order to better highight the dynamic range, we can use a log-based representation
 
-```{r}
+```{r fig.width=7, fig.height=7, fig.align="center"}
 plot(input.bedg$counts, chip.bedg$counts, col="darkviolet",
      xlab="Genomic input", ylab="FNR ChIP-seq",
      main="Reads per 200bp bin",
@@ -352,7 +352,7 @@ Note: most points are much below the diagonal. Why?
 
 ## ChIP/input ratios
 
-```{r}
+```{r fig.width=7, fig.height=4, fig.align="center"}
 count.table$ratio <- (count.table$counts.chip + 1) / (count.table$counts.input + 1)
 
 hist(count.table$ratio)
@@ -362,7 +362,7 @@ The basic histogram is quite ugly. Let us fix this.
 
 ## Ratio histogram with more breaks
 
-```{r}
+```{r fig.width=7, fig.height=4, fig.align="center"}
 hist(count.table$ratio, breaks=100)
 ```
 
@@ -370,7 +370,7 @@ Still very packed.
 
 ## Ratio histogram with even more breaks
 
-```{r}
+```{r fig.width=7, fig.height=4, fig.align="center"}
 hist(count.table$ratio, breaks=1000)
 ```
 
@@ -418,7 +418,7 @@ abline(a=0, b=1, col="black")
 
 ## Log-ratios
 
-```{r}
+```{r fig.width=7, fig.height=4, fig.align="center"}
 count.table$scaled.ratio.libsum <- (count.table$counts.chip + epsilon ) / (count.table$input.scaled.libsize + epsilon)
 
 hist(count.table$scaled.ratio.libsum, breaks=2000, xlim=c(0, 5), xlab="Count ratios after libsum scaling", main="Count ratio histogram", col="gray", border="gray")
@@ -550,13 +550,34 @@ count.table$pvalue <- ppois(
   lambda = count.table$input.scaled.median, lower.tail = FALSE)
 ```
 
+## P-value histogram
+
+We computed a p-value for each bin separately. Before going further, it is always informative to get a  sketch of the distribution of all the p-values in our dataset. This can be achieved with a p-value histogram. 
+
+```{r fig.width=7, fig.height=4, fig.align="center"}
+hist(count.table$pvalue, breaks=20, col="grey")
+```
+
+To be discussed: 
+
+- under the null hypothesis, what would be the expected shape for a p-value distribution ?
+- what do we see in the p-value range from 0 to 0.05 ?
+- what do we see in the p-value range from 0.95 to 1.00 ?
+
+
 ## P-value profile
+
+By definition, P-values are comprised between 0 and 1. 
+
+However, we are only interested by very low values. For graphical purposes, what is relevant is not to perceive differences between 0.20, 0.50 or 0.90 (all these high p-values indicate that the result is not significant), but by very small p-values, e.g. $10^{-2}$,  $10^{-5}$ or  $10^{-300}$.  
+
+For this, p-values are usually represented on a logarithmic scale. Alternatively, p-values can be converted to -log10(p-value). 
+
 
 ```{r fig.width=7, fig.height=8}
 par(mfrow=c(3,1))
 par(mar=c(2,4,0.5,0.5))
 plot(count.table$midpos, count.table$counts.chip, type='h', col="darkgreen", xlab="", ylab="counts")
-plot(count.table$midpos, count.table$pvalue, type='h', col="grey", xlab="", ylab="p-value")
 plot(count.table$midpos, -log10(count.table$pvalue), type='h', col="grey", xlab="", ylab="-log10(p-value)")
 par(mfrow=c(1,1))
 ```
@@ -577,20 +598,4 @@ Tractability is an important issue in sciences. Since R and its libraries are ev
 ## Print the complete list of libraries + versions used in this session
 sessionInfo()
 ```
-
-
-<!--
-
-```{r eval=TRUE, echo=FALSE}
-################################################################
-## Extract the code of this markdown file
-this.folder <- "~/stats_avec_RStudio_EBA/practicals/02_peak-calling/"
-setwd(this.folder)
-md.file <- "peak-calling_stats_practical.Rmd"
-purl(md.file)
-```
--->
-
-
-
 
