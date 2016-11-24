@@ -4,18 +4,25 @@ author: "Jacques van Helden"
 date: '`r Sys.Date()`'
 output:
   html_document:
-    highlight: tango
-    theme: united
+    fig_caption: yes
+    highlight: zenburn
+    theme: cerulean
     toc: yes
     toc_depth: 3
+    toc_float: yes
+  md_document:
+    variant: markdown_github
   pdf_document:
+    fig_caption: yes
     highlight: zenburn
     toc: yes
     toc_depth: 3
-css: styles.css
+  word_document:
+    toc: yes
+    toc_depth: 3
 ---
 
-## Objectives
+# Objectives
 
 During this practical, we will develop in <span class="program">R</span> a simplified version of the <span class="program">MACS</span> peak calling algorithm, and test it on a relatively small dataset (ChIP-seq data for the FNR transcription factor in the genome of the Bacteria <span class="organism">Escherichia coli</span>).
 
@@ -23,18 +30,18 @@ During this practical, we will develop in <span class="program">R</span> a simpl
 
 * * * * *
 
-## Data sets
+# Data sets
 
 For each sample (<span class="concept">FNR ChIP-seq</span> and <span class="concept">genomic input</span>) we pre-computed bed files with the counts reads mapped in non-overlapping windows of 200bp, or 50bp, respectively (two files per sample).
 
-### Read counts per 200bp windows
+## Read counts per 200bp windows
 1. FNR ChIP-seq sample (<span class="concept">test</span>) 
 <br>[FNR\_ChIP-seq\_Anaerobic\_A\_GSM1010219\_reads\_per\_200bp.bedg](../../data/chipseq/Escherichia_coli_FNR_vs_input/FNR_ChIP-seq_Anaerobic_A_GSM1010219_reads_per_200bp.bedg)
 
 2. Genomic input (control)
 <br>[Escherichia\_coli\_K\_12\_MG1655\_input\_reads\_per\_200bp.bedg](../../data/chipseq/Escherichia_coli_FNR_vs_input/Escherichia_coli_K_12_MG1655_input_reads_per_200bp.bedg)
  
-### Read counts per 50bp windows
+## Read counts per 50bp windows
 3. FNR ChIP-seq sample (<span class="concept">test</span>) 
 <br>[FNR\_ChIP-seq\_Anaerobic\_A\_GSM1010219\_reads\_per\_50bp.bedg](../../data/chipseq/Escherichia_coli_FNR_vs_input/FNR_ChIP-seq_Anaerobic_A_GSM1010219_reads_per_50bp.bedg)
 
@@ -50,7 +57,7 @@ semi-open intervals. Thus, the coordinates `0  50` correspond to
 -   i.e. the closed interval `[0:49]` in zero-based coordinates;
 -   i.e. the closed interval `[1:50]` in one-based (human understandable) coordinates.
 
-## How was this dataset generated?
+# How was this dataset generated?
 
 This section is optional. It explains the tricks we used to generate a data set for this exercise.
 
@@ -66,37 +73,37 @@ The protocol to count reads per bin is the following:
     position.
 3.  Use <span class="program">bedtools</span> to compute the intersection between each bin and the read file (i.e. count the reads falling onto each bin).
 
-### Generating windows of equal size along the reference genome
+## Generating windows of equal size along the reference genome
 
-<pre>
+```
 bedtools makewindows \
   -g Escherichia_coli_K_12_MG1655_genome.txt -w 200 \
   > Escherichia_coli_K_12_MG1655_windows_200bp.bed
-</pre>
+```
 
 The file genome.txt is expected to be a 2-columns file indicating the ID and length of each chromosome. In the case of Escherichia coli, the file contains a single line:
 
     gi|49175990|ref|NC_000913.2|    4639675
 
-### Converting bam to sorted bed
+## Converting bam to sorted bed
 
 To compute the intersection between two sets of genomic regions (bedtools intersect), bedtools requires two bed files sorted by chromosome and by chromosomal position.
 We first need ton convert sam to bed format.
 For this we use an intermediate BAM format.
 
-<pre>
-# Convert mapped reads of FNR ChIP-seq library (test)
+```
+## Convert mapped reads of FNR ChIP-seq library (test)
 samtools view -bS SRR576933.sam | bedtools bamtobed | \
   sort -n -k 2 \> SRR576933_sorted.bed
 
 ## Convert mapped reads of control library (input)
 samtools view -bS SRR576938.sam | bedtools bamtobed \
   | sort -n -k 2 > SRR576938_sorted.bed
-</pre>
+```
 
-### Counting the reads per bin
+## Counting the reads per bin
 
-<pre>
+```
 # Count the number of reads per window in the FNR ChIP-seq library
 bedtools intersect -a Escherichia_coli_K_12_MG1655_windows_200bp.bed \
 -b SRR576933_sorted.bed \
@@ -108,11 +115,11 @@ bedtools intersect -a Escherichia_coli_K_12_MG1655_windows_200bp.bed \
 -b SRR576938_sorted.bed \
 -c -sorted \
 >  Escherichia_coli_K_12_MG1655_input_reads_per_200bp.bedg    
-</pre>
+```
 
 ---------------------------------------
 
-## Questions
+# Questions
 
 <div class="exo">
 1.  Download the two bed files describing read maps ("test" and "input", respectively), for a given window size. 
@@ -149,7 +156,7 @@ bedtools intersect -a Escherichia_coli_K_12_MG1655_windows_200bp.bed \
 
 * * * * *
 
-## References
+# References
 
 1.  MACS method descripion: \
     Zhang, Y., Liu, T., Meyer, C.A., Eeckhoute, J., Johnson, D.S.,
@@ -165,15 +172,15 @@ bedtools intersect -a Escherichia_coli_K_12_MG1655_windows_200bp.bed \
 
 * * * * *
 
-## Solutions
+# Solutions
 
-### Loading the two bed files describing read counts in <span class="program">R</span>
+## Loading the two bed files describing read counts in <span class="program">R</span>
 
 We can directly load the data from the web site.
 
 ```{r}
-#url.course <- "~/roscoff_2015/stats_avec_RStudio_EBA/" # For JvH local test only
-url.course <- "http://jvanheld.github.io/stats_avec_RStudio_EBA/"
+url.course <- "~/stats_avec_RStudio_EBA/" # For JvH local test only
+#url.course <- "http://jvanheld.github.io/stats_avec_RStudio_EBA/"
 url.data <- file.path(url.course, "practicals", "02_peak-calling", "data")
 
 ## Choose a window size (200 or 50)
@@ -202,7 +209,7 @@ dim(input.bedg) ## Check number of rows and columns (should be the same as for t
 head(input.bedg) ## check the content of the first rows
 ```
 
-### Counting the total reads per library
+## Counting the total reads per library
 
 For each library (FNR and input, respectively), the total number of reads is obtained by computing the sum of all values from the fourth column, which contains the number of reads for each window.
 
@@ -237,7 +244,7 @@ However, we need to keep in mind that the test and input libraries are of differ
 **Note:** the sum of reads differs from the actual total counts. Indeed, the protocol used to generate the data counts the number of reads overlapping each window. So, if a read overlaps two adjacent windows, it will be counted twice. We will temporarily ignore this problem, which will be fixed in the future by counting reads only for the window that overlaps their central residue.
 
 
-### Normalization of the input library
+## Normalization of the input library
 
 We will now normalize the input library in order to obtain the same sum as the test (FNR) library.
 
@@ -259,7 +266,7 @@ Whereas the input and test datasets consisted in natural numbers (read counts), 
 The principle of the following tests will be to define suitable statistics to compare the number of reads observed in each window of the FNR sample with this random expectation estimated from the normalized input.
 
 
-### Comparison between FNR and input count distributions
+## Comparison between FNR and input count distributions
 
 Compare the distributions of counts per reads (normalized for the input) in the ChIP-seq and input samples.
 
@@ -321,7 +328,7 @@ par(mfrow=c(1,1)) ## Restore default plot setting
 ```
 
 
-#### Chromosomal repartition
+### Chromosomal repartition
 
 The two plots below are genome-wide density maps: the X axis represents the chromosomal position, the Y axis the number of reads per 200bp window. The test sample (top plot) clearly shows many windows with a relatively high number of reads, as compared to the normalized input (bottom plot).
 
@@ -356,7 +363,7 @@ abline(h=mean(norm.input), col="#00CC00", lwd=2)
 par(mfrow=c(1,1))
 ```
 
-### 6.  For each bin, compute the following statistics, and collect them in a table (one row per bin, one column per statistics):
+## 6.  For each bin, compute the following statistics, and collect them in a table (one row per bin, one column per statistics):
 
 **Note**: each of these statistics can be computed with a single operation -- in R, you should avoid loops whenever possible.
 
@@ -389,7 +396,7 @@ head(read.stats)
 ```
 
 
-### P-value of the test reads, using a hypergeometric distribution (explain your model)
+## P-value of the test reads, using a hypergeometric distribution (explain your model)
 
 The classical model for the hypergeometric is the drawing of a set of balls in an urn containing $m$ black ("marked") and $n$ white ("non-marked") balls. We will apply an analogous reasoning, by considering that we draw at random a set of reads among a population combining all the reads of the two librarires, where $m$ is the total number of reads in the test library (i.e. the FNR-chipped sample), and $n$ the total number of reads in the control library ("input"").
 
@@ -431,7 +438,7 @@ head(read.stats)
 ```
 
 
-### An alternative (but equivalent) reasoning to model hypergeometric p-value
+## An alternative (but equivalent) reasoning to model hypergeometric p-value
 
 An alternative way to model the probabilities of read counts in  FNR and input libraries is to consider as the universe all the reads from both libraries (as above), but to consider as "marked" those reads falling into a given specific window $i$, irrespective of their library. 
 
@@ -477,7 +484,7 @@ head(read.stats)
 ```
 
 
-### P-value of the test reads, using a Poisson distribution with local lambda estimate (explain your model)
+## P-value of the test reads, using a Poisson distribution with local lambda estimate (explain your model)
 
 The simplest way to compute a P-value is to use the Poisson distribution, which requires a single parameter ($\lambda$) indicating the expected number of hits.
 
@@ -498,7 +505,7 @@ read.stats$ppois <- ppois(q=read.stats$counts-1,
 
 ```
 
-### P-value of the test reads, using a binomial distribution (explain your model).
+## P-value of the test reads, using a binomial distribution (explain your model).
 
 For the binomial, we can consider each read as a trial, which can either result in a "success" if the read falls within the window of interest, and a "failure" otherwise. Our input library will serve us to estimate a window-specific prior probability ($p^{window}_i$), indicating the probability for a read to fall within the $i^{th}$ positional window.
 
@@ -536,7 +543,7 @@ head(read.stats)
 
 
 
-### 7.  Draw some dot plots to compare the different statistics (fold enrichment, log-fold, p-values with the different models).
+## 7.  Draw some dot plots to compare the different statistics (fold enrichment, log-fold, p-values with the different models).
 
 ```{r fig.width=8, fig.height=8}
 ## Plot the Poisson versus binomial p-values
@@ -553,7 +560,7 @@ lines(read.stats[,c("ppois","phyper")],type="p", pch=2)
 ```
 
 
-#### Distribution of measured p-values
+### Distribution of measured p-values
 
 ```{r width=7, height=12}
 
@@ -578,9 +585,9 @@ hist(read.stats$phyper, breaks=20,
 ```
 
 
-### 8.  **Discuss the results.**
+## 8.  **Discuss the results.**
 
-#### The binomial and Poisson p-values are very close to each other
+### The binomial and Poisson p-values are very close to each other
 
 On the plot comparing p-values obtained with the three respective models, the Poisson and binomial distribution give remarkably close estimations of the p-value. This is not surprizing, since we are in the ideal conditons under which the binomial converges towards a Poisson : 
 
@@ -590,7 +597,7 @@ On the plot comparing p-values obtained with the three respective models, the Po
 
 The Poisson is thus a very good approximation of the binomial. 
 
-#### Hypergeometric p-values are much higher than binomial or Poisson p-values
+### Hypergeometric p-values are much higher than binomial or Poisson p-values
 
 In contrast, the hypergeometric p-values shows a strong departure from the Poisson and binomial. There is a relatively consistency between the relative p-values: although the relationship between hypergeometric and Poisson p-values is not monotonous, there seems to be a strong linear correlation on the logaritmic plot. However, for the smallest p-values, it is several tens of orders of magnitudes higer than the Poisson and binomial p-values.  
 
