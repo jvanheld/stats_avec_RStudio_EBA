@@ -49,61 +49,76 @@ options(width=300)
 knitr::opts_chunk$set(fig.align="center", cache=FALSE)
 ```
 
-# Introduction
+# Requirements
 
-## Context
+For people using their own laptop, install some R packages:
+
+```{r eval=FALSE}
+source("http://bioconductor.org/biocLite.R")
+biocLite(c("DESeq2","edgeR","gplots"), ask=FALSE)
+```
+
+# Context
 
  - Study of 48 WT yeast samples vs 48 Snf2 (KO) samples: Gierliński et al. *Statistical models for RNA-seq data derived from a two-condition 48-replicate experiment*, Bioinformatics, 2015.
 
- - RNA-Seq reads have been cleaned, mapped and counted to generated a count data matrix containing 7126.
+ - RNA-Seq reads have been cleaned, mapped and counted to generated a count data matrix containing 7126 genes.
 
-## Loading a data table
+# Loading a data table
 
-**R** enables to download data directly from the Web. Load counts per gene for each sample of biological condition (WT and Snf2).
+**R** enables to download data directly from the Web. Load the counts table containing one row per gene and one column per sample.
 
 ```{r}
-## Load the files content in an R data.frame
-counts <- read.table("http://jvanheld.github.io/stats_avec_RStudio_EBA/practicals/yeast_2x48_replicates/data/counts.txt", sep="\t", header=TRUE, row.names=1)
+# Load the files content in an R data.frame
+path.counts <- "http://jvanheld.github.io/stats_avec_RStudio_EBA/practicals/yeast_2x48_replicates/data/counts.txt"
+counts <- read.table(file=path.counts, sep="\t", header=TRUE, row.names=1)
 
-expDesign <- read.table("http://jvanheld.github.io/stats_avec_RStudio_EBA/practicals/yeast_2x48_replicates/data/expDesign.txt", sep="\t", header=TRUE)
+path.expDesign <- "http://jvanheld.github.io/stats_avec_RStudio_EBA/practicals/yeast_2x48_replicates/data/expDesign.txt"
+expDesign <- read.table(file=path.expDesign, sep="\t", header=TRUE)
+```
 
-## look at the beginning of the counts and design table:
-print(counts[1:6,1:5])
-print(expDesign[1:5,])
+# Checking the content of the count tables
 
-## dimension
+```{r}
+# look at the beginning of the counts and design table:
+print(counts[1:4,1:4])
+print(expDesign[1:4,])
+
+# dimension of each table
 dim(counts)
 dim(expDesign)
 ```
 
-## Checking the content of the count tables
-
 ```{r eval=FALSE}
 View(counts)
 View(expDesign)
+```
 
+# Factors and levels in R
+
+Be careful to the reference level in the factor variables:
+
+```{r}
 print(expDesign$strain)
 expDesign$strain <- relevel(expDesign$strain, "WT")
 print(expDesign$strain)
 ```
 
-## Basic description of the data: number of reads per sample
+# Basic description of the data: number of reads per sample
 
 ```{r}
 barplot(colSums(counts)/1000000, main="Total number of reads per sample (million)")
 ```
 
-## Basic description of the data: percentage of null counts per sample
+# Basic description of the data: percentage of null counts per sample
 
 ```{r}
 prop.null <- apply(counts, 2, function(x) 100*mean(x==0))
-print(prop.null)
+print(head(prop.null))
 barplot(prop.null, main="Percentage of null counts per sample")
 ```
 
-# Differential analysis using DESeq2
-
-## DESeq2 main object: dds
+# Differential analysis with DESeq2
 
 ```{r message=FALSE}
 # load the DESeq2 R package
@@ -113,55 +128,54 @@ dds0 <- DESeqDataSetFromMatrix(countData = counts, colData = expDesign, design =
 print(dds0)
 ```
 
-## DESeq2 differential analysis with two command lines
+# Get the results using two command lines
 
-```{r}
+```{r message=TRUE}
 dds0 <- DESeq(dds0)
 res0 <- results(dds0)
 print(res0)
 print(summary(res0))
+print(mcols(res0))
 ```
 
-## Sub-sampling: analysis using a few replicates
+# Sub-sampling: analysis using a few replicates
 
 ```{r}
 nb.replicates <- 4
 samples.WT <- sample(1:48, size=nb.replicates, replace=FALSE)
 samples.Snf2 <- sample(49:96, size=nb.replicates, replace=FALSE)
-print(samples.WT)
-print(samples.Snf2)
+print(c(samples.WT, samples.Snf2))
 dds <- DESeqDataSetFromMatrix(countData = counts[,c(samples.WT, samples.Snf2)], 
                               colData = expDesign[c(samples.WT, samples.Snf2),], 
                               design = ~ strain)
+print(dds)
 ```
 
 We now perform a differential analysis with DESeq2 step by step with some quality controls.
 
-## Normalization
+# Normalization
 
 ```{r fig.width=14}
 dds <- estimateSizeFactors(dds)
 print(sizeFactors(dds))
 # effect of the normalization
 par(mfrow=c(1,2))
-boxplot(log2(counts(dds, normalized=FALSE)+1), main="Raw counts",
-        col=rep(c("lightblue","orange"), each=nb.replicates))
-boxplot(log2(counts(dds, normalized=TRUE)+1), main="Normalized counts",
-        col=rep(c("lightblue","orange"), each=nb.replicates))
+boxplot(log2(counts(dds, normalized=FALSE)+1), main="Raw counts", col=rep(c("lightblue","orange"), each=nb.replicates))
+boxplot(log2(counts(dds, normalized=TRUE)+1), main="Normalized counts", col=rep(c("lightblue","orange"), each=nb.replicates))
 ```
 
-## Mean-variance relationship
+# Mean-variance relationship
 
-```{r}
-m <- rowMeans(counts(dds))
-v <- apply(counts(dds), 1, var)
-plot(m, v, pch=16, cex=0.3, main="Mean-variance relationship", log="xy")
+```{r warning=FALSE}
+mean.counts <- rowMeans(counts(dds))
+variance.counts <- apply(counts(dds), 1, var)
+plot(x=mean.counts, y=variance.counts, pch=16, cex=0.3, main="Mean-variance relationship", log="xy")
 abline(a=0, b=1)
 ```
 
-We observe over-dispersion in the data: the Poisson distribution is not adapted.
+We observe over-dispersion in the data: the Poisson distribution is not adapted and we prefer the Negative-Binommial distribution.
 
-## Principal Component Analysis (PCA)
+# Principal Component Analysis (PCA)
 
 ```{r message=FALSE, fig.width=10}
 # dispersions estimation
@@ -171,34 +185,28 @@ rld <- rlog(dds) # alternative to the "Variance Stabilizing Transformation"
 plotPCA(rld, intgroup="strain") # function from the DESeq2 package
 ```
 
-## Statistical test for each gene
+# Statistical test for each gene
 
 ```{r}
 dds <- nbinomWaldTest(dds)
 res.DESeq2 <- results(dds, alpha=0.05, pAdjustMethod="BH")
 print(head(res.DESeq2))
-print(mcols(res.DESeq2))
-```
-
-## Statistical test for each gene (2)
-
-```{r}
 summary(res.DESeq2, alpha=0.05)
 ```
 
-## Histogram of raw P-values
+# Histogram of raw P-values
 
 ```{r}
 hist(res.DESeq2$pvalue, col="lightblue", main="Histogram of raw P-values (DESeq2)", breaks=20, xlab="P-value")
 ```
 
-## MA-plot
+# MA-plot
 
 ```{r}
 plotMA(res.DESeq2, alpha=0.05) # function from the DESeq2 package
 ```
 
-## Volcano-plot
+# Volcano-plot
 
 Here we need to build the plot using R base functions:
 
@@ -208,9 +216,7 @@ plot(x=res.DESeq2$log2FoldChange, y=-log10(res.DESeq2$padj),
      col=ifelse(res.DESeq2$padj<=0.05, "red", "black"), main="Volcano plot")
 ```
 
-# Differential analysis using edgeR
-
-## edgeR main object: dge
+# Differential analysis using edgeR with a few replicates
 
 ```{r message=FALSE}
 # load the edgeR R package
@@ -221,7 +227,7 @@ dge$design <- model.matrix(~ strain, data=expDesign[c(samples.WT, samples.Snf2),
 print(dge)
 ```
 
-## Normalization & dispersions estimation
+# Normalization & dispersions estimation with edgeR
 
 ```{r}
 # normalization
@@ -233,34 +239,31 @@ dge <- estimateGLMTrendedDisp(dge, dge$design)
 dge <- estimateGLMTagwiseDisp(dge, dge$design)
 ```
 
-## Modeling and testing
+# Modeling and testing with edgeR
 
 ```{r}
 fit <- glmFit(dge, dge$design)
 print(dge$design)
-lrt <- glmLRT(fit, coef="strainSnf")
+lrt <- glmLRT(fit)
 res.edgeR <- topTags(lrt,n=nrow(dge$counts),adjust.method="BH")$table
 print(head(res.edgeR))
 ```
 
-## Histogram of raw P-values
+# Histogram of raw P-values
 
 ```{r}
 hist(res.edgeR$PValue, col="lightblue", main="Histogram of raw P-values (edgeR)", breaks=20, xlab="P-value")
 ```
 
-# Compare DESeq2 and edgeR results
-
-## Normalization method
+# Compare DESeq2 and edgeR results: normalization factors
 
 ```{r}
-plot(x=sizeFactors(dds), y=dge$samples$norm.factors,
-     xlab="DESeq2 size factors", ylab="edgeR normalization factors", pch=16)
+plot(x=sizeFactors(dds), y=dge$samples$norm.factors, xlab="DESeq2 size factors", ylab="edgeR normalization factors", pch=16)
 ```
 
 The normalization/size factors computed by DESeq2 and edgeR are not comparable as they are used in a different manner in the statistical/mathematical models.
 
-## Re-order the results according to the gene names
+# Re-order the results according to the gene names
 
 ```{r}
 print(head(res.DESeq2))
@@ -269,7 +272,7 @@ res.edgeR <- res.edgeR[order(rownames(res.edgeR)),]
 res.DESeq2 <- res.DESeq2[order(rownames(res.DESeq2)),]
 ```
 
-## log2(Fold-Change) estimations
+# Comparing log2(Fold-Change) estimations
 
 ```{r}
 plot(x=res.edgeR$logFC, y=res.DESeq2$log2FoldChange, 
@@ -279,7 +282,7 @@ abline(a=0, b=1, col="red", lwd=4) # draw the y=x curve (y=a+b*x with a=0 and b=
 abline(h=0, v=0) # horizontal and vertical line
 ```
 
-## Raw P-values
+# Comparing raw P-values
 
 ```{r}
 plot(x=res.edgeR$PValue, y=res.DESeq2$pvalue, 
@@ -287,7 +290,7 @@ plot(x=res.edgeR$PValue, y=res.DESeq2$pvalue,
 abline(a=0, b=1, col="red", lwd=4) # draw the y=x curve (y=a+b*x with a=0 and b=1)
 ```
 
-## Number of differentially expressed genes
+# Number of differentially expressed genes
 
 ```{r}
 # remember the number of replicates
@@ -300,9 +303,9 @@ sum(res.edgeR$FDR <= 0.05, na.rm=TRUE)
 
 What's the behaviour of the number of differentially expressed genes according to the number of samples?
 
-## Venn diagram
+# Venn diagram
 
-```{r}
+```{r message=FALSE}
 library(gplots)
 venn(list(DESeq2=rownames(res.DESeq2[which(res.DESeq2$padj <= 0.05),]), 
           edgeR=rownames(res.edgeR[which(res.edgeR$FDR <= 0.05),])))
@@ -310,7 +313,7 @@ venn(list(DESeq2=rownames(res.DESeq2[which(res.DESeq2$padj <= 0.05),]),
 
 Supplementary exercise: do the same plot for up- and down-regulated genes separately.
 
-## What's edgeR or DESeq2-specific?
+# What's edgeR or DESeq2-specific?
 
 ```{r}
 DESeq2.genes <- rownames(res.DESeq2[which(res.DESeq2$padj <= 0.05),])
@@ -323,15 +326,14 @@ spe.edgeR <- setdiff(edgeR.genes, DESeq2.genes)
 summary(res.DESeq2[spe.edgeR,"padj"])
 ```
 
-## edgeR vs DESeq2 results for one gene
+# DESeq2 results for one gene
 
 ```{r}
 # plotCounts is a function from the DESeq2 R package
 plotCounts(dds, gene="ycr017c", intgroup="strain", normalized=TRUE)
-plotCounts(dds, gene="ycr021c", intgroup="strain", normalized=TRUE)
 ```
 
-## Differential analysis under $H_0$
+# Differential analysis under $H_0$
 
 Here we perform a differential analysis in which we compare N WT samples vs N other WT samples.
 
@@ -341,14 +343,15 @@ samples.WT <- sample(1:48, size=2*nb.replicates, replace=FALSE)
 print(samples.WT)
 counts.H0 <- counts[,samples.WT]
 expDesign.H0 <- expDesign[samples.WT,]
+# add a fictive condition factor
 expDesign.H0$condition <- factor(rep(c("A","B"), each=nb.replicates))
 print(expDesign.H0)
 dds.H0 <- DESeqDataSetFromMatrix(countData = counts.H0, colData = expDesign.H0, design = ~ condition)
 ```
 
-## Differential analysis with DESeq2 under $H_0$
+# Differential analysis with DESeq2 under $H_0$
 
-```{r}
+```{r message=FALSE}
 dds.H0 <- DESeq(dds.H0)
 res.H0 <- results(dds.H0)
 summary(res.H0)
@@ -356,7 +359,7 @@ summary(res.H0)
 
 # sessionInfo
 
-Here is the list of the R packages used and their versions:
+Here are the details of the R packages used to generate this document:
 
 ```{r}
 sessionInfo()
