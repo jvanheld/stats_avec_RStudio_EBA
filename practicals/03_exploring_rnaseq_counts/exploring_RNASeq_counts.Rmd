@@ -162,7 +162,7 @@ print(mcols(res0))
 
 The original study contained 48 replicates per genotype, what happens if we select a smaller number?
 
-Test: each attendee of this course could select a given number  (e.g. 3,4,5,10,15,20) and adapt the code on the next slide to run the analysis with that number of replicates per genotype. We then compare the results (number of genes, significance, ...).
+**Test:** each attendee of this course could select a given number  (e.g. 3,4,5,10,15,20) and adapt the code on the next slide to run the analysis with that number of replicates per genotype. We then compare the results (number of genes, significance, ...).
 
 # Sub-sampling: analysis using a few replicates
 
@@ -240,9 +240,12 @@ plotMA(res.DESeq2, alpha=0.05) # function from the DESeq2 package
 Here we need to build the plot using R base functions:
 
 ```{r}
+## Draw a volcano plot
 plot(x=res.DESeq2$log2FoldChange, y=-log10(res.DESeq2$padj), 
      xlab="log2(Fold-Change)", ylab="-log10(adjusted P-value",
      col=ifelse(res.DESeq2$padj<=0.05, "red", "black"), main="Volcano plot")
+grid() ## Add a grid to the plot
+abline(v=0) ## plot the X axis
 ```
 
 # Differential analysis using edgeR with a few replicates
@@ -361,6 +364,16 @@ summary(res.DESeq2[spe.edgeR,"padj"])
 # plotCounts is a function from the DESeq2 R package
 plotCounts(dds, gene="ycr017c", intgroup="strain", normalized=TRUE)
 ```
+
+# Negative control
+
+**Question:** how reliable are the genes declared "positive", i.e. differentially expressed?
+
+In principle, a good DEG detection program should return a negative answer when the dataset contains no differentially expressed gene. 
+
+**Test:** run DESeq2 and edgeR on a tricky dataset, built by selecting two subsets of replicates in the same genotype. Since the two sample sets are obtained in the same conditions, the analysis should return no DEG gene. 
+
+This is a *negative control*: we build an experiment whose result is expected to be negative.
 
 # Differential analysis under $H_0$
 
