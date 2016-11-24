@@ -14,6 +14,13 @@ output:
     theme: cerulean
     toc: yes
     widescreen: yes
+  html_document:
+    fig_caption: yes
+    highlight: zenburn
+    theme: cerulean
+    toc: yes
+    toc_depth: 3
+    toc_float: yes
   ioslides_presentation:
     colortheme: dolphin
     fig_caption: yes
@@ -27,6 +34,11 @@ output:
     theme: cerulean
     toc: yes
     widescreen: yes
+  pdf_document:
+    fig_caption: yes
+    highlight: zenburn
+    toc: yes
+    toc_depth: 3
   beamer_presentation:
     colortheme: dolphin
     fig_caption: yes
@@ -46,7 +58,7 @@ transition: linear
 
 ```{r include=FALSE}
 options(width=300)
-knitr::opts_chunk$set(fig.align="center", cache=FALSE)
+knitr::opts_chunk$set(fig.align="center", cache=FALSE, eval=TRUE)
 ```
 
 # Requirements
@@ -60,7 +72,12 @@ biocLite(c("DESeq2","edgeR","gplots"), ask=FALSE)
 
 # Context
 
- - Study of 48 WT yeast samples vs 48 Snf2 (KO) samples: Gierliński et al. *Statistical models for RNA-seq data derived from a two-condition 48-replicate experiment*, Bioinformatics, 2015.
+ - Study of 48 WT yeast samples vs 48 Snf2 (KO) samples: 
+ 
+ 
+    1. Gierliński,M., Cole,C., Schofield,P., Schurch,N.J., Sherstnev,A., Singh,V., Wrobel,N., Gharbi,K., Simpson,G., Owen-Hughes,T., et al. (2015) Statistical models for RNA-seq data derived from a two-condition 48-replicate experiment. Bioinformatics, 10.1093/bioinformatics/btv425. [pdf](http://bioinformatics.oxfordjournals.org/content/early/2015/08/17/bioinformatics.btv425.full.pdf)
+    
+    2. Schurch,N.J., Schofield,P., Gierliński,M., Cole,C., Sherstnev,A., Singh,V., Wrobel,N., Gharbi,K., Simpson,G.G., Owen-Hughes,T., et al. (2016) How many biological replicates are needed in an RNA-seq experiment and which differential expression tool should you use? [RNA, 10.1261/rna.053959.115](http://rnajournal.cshlp.org/content/early/2016/03/28/rna.053959.115).
 
  - RNA-Seq reads have been cleaned, mapped and counted to generated a count data matrix containing 7126 genes.
 
@@ -121,9 +138,9 @@ barplot(prop.null, main="Percentage of null counts per sample")
 # Differential analysis with DESeq2
 
 ```{r message=FALSE}
-# load the DESeq2 R package
+# Load the DESeq2 R package
 library(DESeq2)
-# create the DESeq2 main object
+# Build the DESeq2 main object with the count data + experimental design
 dds0 <- DESeqDataSetFromMatrix(countData = counts, colData = expDesign, design = ~ strain)
 print(dds0)
 ```
@@ -131,23 +148,35 @@ print(dds0)
 # Get the results using two command lines
 
 ```{r message=TRUE}
-dds0 <- DESeq(dds0)
+# Detect differentially expressed genes
+dds0 <- DESeq(dds0) 
 res0 <- results(dds0)
 print(res0)
 print(summary(res0))
 print(mcols(res0))
 ```
 
+# How many replicates are required?
+
+**Question**: how robust is the analysis to the number of samples? 
+
+The original study contained 48 replicates per genotype, what happens if we select a smaller number?
+
+Test: each attendee of this course could select a given number  (e.g. 3,4,5,10,15,20) and adapt the code on the next slide to run the analysis with that number of replicates per genotype. We then compare the results (number of genes, significance, ...).
+
 # Sub-sampling: analysis using a few replicates
 
 ```{r}
-nb.replicates <- 4
+nb.replicates <- 4 ## Each attendee chooses a number (3,4,5,10,15 or 20)
+## Random sampling of the WT replicates (columns 1 to 48)
 samples.WT <- sample(1:48, size=nb.replicates, replace=FALSE)
+## Random sampling of the Snf2 replicates (columns 49 to 96)
 samples.Snf2 <- sample(49:96, size=nb.replicates, replace=FALSE)
 print(c(samples.WT, samples.Snf2))
-dds <- DESeqDataSetFromMatrix(countData = counts[,c(samples.WT, samples.Snf2)], 
-                              colData = expDesign[c(samples.WT, samples.Snf2),], 
-                              design = ~ strain)
+dds <- DESeqDataSetFromMatrix(
+  countData = counts[,c(samples.WT, samples.Snf2)], 
+  colData = expDesign[c(samples.WT, samples.Snf2),], 
+  design = ~ strain)
 print(dds)
 ```
 
