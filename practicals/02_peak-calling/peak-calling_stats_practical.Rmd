@@ -7,7 +7,6 @@ output:
     fig_caption: yes
     fig_height: 6
     fig_width: 7
-    footer: Jacques van Helden - Stats with R and RStudio
     highlight: tango
     incremental: no
     keep_md: no
@@ -15,12 +14,6 @@ output:
     theme: cerulean
     toc: yes
     widescreen: yes
-  html_document:
-    fig_caption: yes
-    highlight: zenburn
-    theme: cerulean
-    toc: yes
-    toc_depth: 3
     toc_float: yes
   ioslides_presentation:
     colortheme: dolphin
@@ -28,31 +21,40 @@ output:
     fig_height: 6
     fig_width: 7
     fonttheme: structurebold
-    footer: Jacques van Helden - Stats with R and RStudio
     highlight: tango
-    slide_level: 2
+    incremental: no
+    keep_md: no
     smaller: yes
     theme: cerulean
     toc: yes
     widescreen: yes
-  pdf_document:
-    fig_caption: yes
-    highlight: zenburn
-    toc: yes
-    toc_depth: 3
   beamer_presentation:
     colortheme: dolphin
     fig_caption: yes
-    fig_height: 5
+    fig_height: 6
     fig_width: 7
     fonttheme: structurebold
     highlight: tango
     incremental: no
     keep_tex: no
     slide_level: 2
-    theme: Frankfurt
+    theme: Montpellier
     toc: yes
-  word_document: default
+  html_document:
+    fig_caption: yes
+    highlight: zenburn
+    theme: cerulean
+    toc: yes
+    toc_depth: 3
+    toc_float: yes
+  pdf_document:
+    fig_caption: yes
+    highlight: zenburn
+    toc: yes
+    toc_depth: 3
+  word_document: 
+    toc: yes
+    toc_depth: 3
 font-import: http://fonts.googleapis.com/css?family=Risque
 font-family: Garamond
 subtitle: 'Practical: basic stats for peak calling'
