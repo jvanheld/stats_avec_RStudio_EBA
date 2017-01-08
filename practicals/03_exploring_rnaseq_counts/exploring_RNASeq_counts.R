@@ -1,14 +1,24 @@
-## ----include=FALSE-------------------------------------------------------
+## ----include=FALSE, echo=FALSE, eval=TRUE--------------------------------
 options(width=300)
-knitr::opts_chunk$set(fig.align="center", cache=FALSE, eval=TRUE)
+knitr::opts_chunk$set(echo = TRUE, eval=TRUE, fig.width = 7, fig.height = 5, fig.align = "center", size = "tiny", warning = FALSE, results = TRUE, message = FALSE, comment = "")
 
 ## ----eval=FALSE----------------------------------------------------------
 ## source("http://bioconductor.org/biocLite.R")
-## biocLite(c("DESeq2","edgeR","gplots"), ask=FALSE)
+## if (!require(DESeq2)) {
+##   biocLite("DESeq2", ask=FALSE)
+## }
+## if (!require(edgeR)) {
+##   biocLite("edgeR", ask=FALSE)
+## }
+## if (!require(gplots)) {
+##   biocLite("gplots", ask=FALSE)
+## }
 
 ## ------------------------------------------------------------------------
+URL.course <- "http://jvanheld.github.io/stats_avec_RStudio_EBA"
+
 # Load the files content in an R data.frame
-path.counts <- "http://jvanheld.github.io/stats_avec_RStudio_EBA/practicals/yeast_2x48_replicates/data/counts.txt"
+path.counts <- file.path(URL.course, "/practicals/yeast_2x48_replicates/data/counts.txt")
 counts <- read.table(file=path.counts, sep="\t", header=TRUE, row.names=1)
 
 path.expDesign <- "http://jvanheld.github.io/stats_avec_RStudio_EBA/practicals/yeast_2x48_replicates/data/expDesign.txt"
@@ -38,13 +48,16 @@ barplot(colSums(counts)/1000000, main="Total number of reads per sample (million
 ## ------------------------------------------------------------------------
 prop.null <- apply(counts, 2, function(x) 100*mean(x==0))
 print(head(prop.null))
-barplot(prop.null, main="Percentage of null counts per sample")
+barplot(prop.null, main="Percentage of null counts per sample", las=1)
 
 ## ----message=FALSE-------------------------------------------------------
 # Load the DESeq2 R package
 library(DESeq2)
+
 # Build the DESeq2 main object with the count data + experimental design
 dds0 <- DESeqDataSetFromMatrix(countData = counts, colData = expDesign, design = ~ strain)
+
+# Print a summary of the data content
 print(dds0)
 
 ## ----message=TRUE--------------------------------------------------------

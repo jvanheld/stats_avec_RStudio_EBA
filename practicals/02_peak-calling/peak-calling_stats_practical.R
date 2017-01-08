@@ -1,7 +1,7 @@
 ## ----setup, include=FALSE, size="huge"-----------------------------------
 library(knitr)
 ## Default parameters for displaying the slides
-knitr::opts_chunk$set(echo = TRUE, eval=TRUE, fig.width = 7, fig.height = 5, fig.align = "center", size = "tiny")
+knitr::opts_chunk$set(echo = TRUE, eval=TRUE, fig.width = 7, fig.height = 5, fig.align = "center", size = "tiny", warning = FALSE, results = TRUE, message = FALSE, comment = "")
 
 ## ----out.width = "100%", echo=FALSE, fig.cap="**The peak calling question**. Slide from Carl Herrmann. "----
 knitr::include_graphics("images/peak-calling_the_question.png")
@@ -85,12 +85,12 @@ plot(input.bedg[, c("midpos", "counts")], type="h",
      main="Background (genomic input)")
 par(mfrow=c(1,1)) ## Reset default mode
 
-## ----fig.width=7, fig.height=7, fig.align="center"-----------------------
+## ----fig.width=5, fig.height=5, fig.align="center"-----------------------
 plot(input.bedg$counts, chip.bedg$counts, col="darkviolet",
      xlab="Genomic input", ylab="FNR ChIP-seq",
      main="Reads per 200bp bin")
 
-## ----fig.width=7, fig.height=7, fig.align="center"-----------------------
+## ----fig.width=5, fig.height=5, fig.align="center"-----------------------
 plot(input.bedg$counts, chip.bedg$counts, col="darkviolet",
      xlab="Genomic input", ylab="FNR ChIP-seq",
      main="Reads per 200bp bin",
@@ -112,26 +112,26 @@ head(count.table$chrom)
 count.table$chrom <- "NC_000913.2"
 kable(head(count.table)) ## Display the head of the table in a 
 
-## ----fig.width=7, fig.height=7-------------------------------------------
+## ----fig.width=5, fig.height=5-------------------------------------------
 max.counts <- max(count.table[, c("counts.input", "counts.chip")])
 plot(x = count.table$counts.input, xlab="Input counts",
      y = count.table$counts.chip, ylab="ChIP counts",
      main="ChIP versus input counts",
      col="darkviolet", panel.first=grid())
 
-## ----fig.width=7, fig.height=7-------------------------------------------
+## ----fig.width=5, fig.height=5-------------------------------------------
 plot(x = count.table$counts.input, xlab="Input counts per bin",
      y = count.table$counts.chip, ylab="ChIP counts per bin",
      main="ChIP versus input counts (log scale)",
      col="darkviolet", panel.first=grid(), log="xy")
 
-## ----fig.width=7, fig.height=7-------------------------------------------
+## ----fig.width=5, fig.height=5-------------------------------------------
 epsilon <- 0.1 ## Define a small pseudo-count
 plot(x = count.table$counts.input + epsilon, 
      y = count.table$counts.chip + epsilon, 
      col="darkviolet", panel.first=grid(), log="xy")
 
-## ----fig.width=7, fig.height=7-------------------------------------------
+## ----fig.width=5, fig.height=5-------------------------------------------
 plot(x = count.table$counts.input + epsilon, xlab=paste("Input counts +", epsilon),
      y = count.table$counts.chip + epsilon,  ylab=paste("ChIP counts +", epsilon),
      col="darkviolet", panel.first=grid(), log="xy")
@@ -156,29 +156,31 @@ hist(count.table$log2.ratio, breaks = 200, xlim=c(-5,5), col="gray", xlab="Count
 sum(count.table$counts.chip)
 sum(count.table$counts.input)
 
-## ----fig.width=7, fig.height=5, fig.align="center"-----------------------
+## ----libsum_normalisation------------------------------------------------
 ## Normalize input counts by library sizes
 count.table$input.scaled.libsize <- count.table$counts.input * sum(count.table$counts.chip)/sum(count.table$counts.input)
 
+## ----fig.width=7, fig.height=5, fig.align="center"-----------------------
+## Scatter plot after libsum-based normalisation
 plot(x = count.table$input.scaled.libsize + 1, 
      y = count.table$counts.chip + 1, col="darkviolet", log="xy",
-     main="ChIP versus input",
-     xlab="Scaled input counts",
-     ylab="ChIP counts")
-grid()
-abline(a=0, b=1, col="black")
+     main="ChIP versus input", xlab="Scaled input counts", ylab="ChIP counts")
+grid(); abline(a=0, b=1, col="black")
 
 ## ----fig.width=7, fig.height=4, fig.align="center"-----------------------
 count.table$scaled.ratio.libsum <- (count.table$counts.chip + epsilon ) / (count.table$input.scaled.libsize + epsilon)
 
-hist(count.table$scaled.ratio.libsum, breaks=2000, xlim=c(0, 5), xlab="Count ratios after libsum scaling", main="Count ratio histogram", col="gray", border="gray")
-abline(v=mean(count.table$scaled.ratio.libsum), col="darkgreen", lwd=3)
-abline(v=median(count.table$scaled.ratio.libsum), col="brown", lwd=3, lty="dotted")
-legend("topright", c("mean", "median"), col=c("darkgreen", "brown"), lwd=3, lty=c("solid", "dotted"))
-
 ## Print the mean and median scaled ratios
 mean(count.table$scaled.ratio.libsum)
 median(count.table$scaled.ratio.libsum)
+
+
+## ----fig.width=7, fig.height=4, fig.align="center"-----------------------
+hist(count.table$scaled.ratio.libsum, breaks=2000, main="Count ratio histogram", 
+     xlab="Count ratios after libsum scaling", xlim=c(0, 5), col="gray", border="gray")
+abline(v=mean(count.table$scaled.ratio.libsum), col="darkgreen", lwd=3)
+abline(v=median(count.table$scaled.ratio.libsum), col="brown", lwd=3, lty="dotted")
+legend("topright", c("mean", "median"), col=c("darkgreen", "brown"), lwd=3, lty=c("solid", "dotted"))
 
 ## ------------------------------------------------------------------------
 summary(count.table[, c("counts.chip", "counts.input")])
