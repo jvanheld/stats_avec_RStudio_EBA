@@ -3,11 +3,18 @@ title: "First steps with R"
 author: "Jacques van Helden"
 date: '`r Sys.Date()`'
 output:
-  pdf_document:
+  beamer_presentation:
+    colortheme: dolphin
     fig_caption: yes
-    highlight: zenburn
+    fig_height: 6
+    fig_width: 7
+    fonttheme: structurebold
+    highlight: tango
+    incremental: no
+    keep_tex: no
+    slide_level: 2
+    theme: Montpellier
     toc: yes
-    toc_depth: 3
   html_document:
     fig_caption: yes
     highlight: zenburn
@@ -15,8 +22,51 @@ output:
     toc: yes
     toc_depth: 3
     toc_float: yes
-  word_document: default
+  ioslides_presentation:
+    colortheme: dolphin
+    fig_caption: yes
+    fig_height: 6
+    fig_width: 7
+    fonttheme: structurebold
+    highlight: tango
+    incremental: no
+    keep_md: no
+    smaller: yes
+    theme: cerulean
+    toc: yes
+    widescreen: yes
+  pdf_document:
+    fig_caption: yes
+    highlight: zenburn
+    toc: yes
+    toc_depth: 3
+  slidy_presentation:
+    fig_caption: yes
+    fig_height: 6
+    fig_width: 7
+    highlight: tango
+    incremental: no
+    keep_md: no
+    smaller: yes
+    theme: cerulean
+    toc: yes
+    toc_float: yes
+    widescreen: yes
+  word_document:
+    toc: yes
+    toc_depth: 3
+font-import: http://fonts.googleapis.com/css?family=Risque
+font-family: Garamond
+subtitle: 'Practical: first steps with R'
+address: TAGC lab, Aix-Marseille Université, France
+transition: linear
 ---
+
+```{r setup, include=FALSE, size="huge"}
+library(knitr)
+## Default parameters for displaying the slides
+knitr::opts_chunk$set(echo = TRUE, eval=TRUE, fig.width = 7, fig.height = 5, fig.align = "center", size = "tiny", warning = FALSE, results = TRUE, message = FALSE, comment = "")
+```
 
 
 ## Scope
@@ -145,7 +195,7 @@ print(y)
 ## Scatter plot
 
 
-```{r}
+```{r scatter_plot, fig.path="figures/", fig.width=7, fig.height=5, fig.align="center"}
 x <- -10:10
 y <- x^2
 plot(x,y)
@@ -154,7 +204,7 @@ plot(x,y)
 ## Line plot
 
 
-```{r}
+```{r line_plot, fig.path="figures/", fig.width=7, fig.height=5, fig.align="center"}
 x <- -10:10
 y <- x^2
 plot(x,y, type="l")
@@ -200,7 +250,7 @@ print(y) # Check the result
 ## Plotting the Poisson distribution
 
 
-```{r eval=TRUE}
+```{r dpois_plot, fig.path="figures/", fig.width=7, fig.height=4, fig.align="center"}
 x <- 0:14   # Define the X values from 0 to 14
 y <- dpois(x, lambda = 2.5) # Poisson density
 plot(x,y) # Check the result
@@ -235,7 +285,7 @@ A question? Type `?`
 ## Improve the plot: type = histogram
 
 
-```{r}
+```{r dpois_plot_h, fig.path="figures/", fig.width=7, fig.height=4, fig.align="center"}
 x <- 0:14
 lambda <- 2.54
 y <- dpois(x, lambda)
@@ -245,7 +295,7 @@ plot(x,y, type="h")
 ## Improve the plot: Add a title
 
 
-```{r}
+```{r dpois_plot_h_main, fig.path="figures/", fig.width=7, fig.height=4, fig.align="center"}
 plot(x,y, type="h", lwd=5, col="blue",
      main="Poisson density")
 ```
@@ -253,7 +303,7 @@ plot(x,y, type="h", lwd=5, col="blue",
 ## Improve the plot: define axis labels
 
 
-```{r}
+```{r dpois_plot_h_xylab, fig.path="figures/", fig.width=7, fig.height=4, fig.align="center"}
 plot(x,y, type="h", lwd=5, col="blue",
      main="Poisson density",
      xlab="x = number of successes",
@@ -263,7 +313,7 @@ plot(x,y, type="h", lwd=5, col="blue",
 ## Improve the plot: add a legend
 
 
-```{r}
+```{r dpois_plot_h_legend, fig.path="figures/", fig.width=7, fig.height=4, fig.align="center"}
 plot(x,y, type="h", lwd=5, col="blue",
      main="Poisson density",
      xlab="x = number of successes",
@@ -283,7 +333,7 @@ legend("topright", paste("lambda =", lambda))
 
 $lambda=0.01$
 
-```{r}
+```{r dpois_series_lambda0_01, fig.path="figures/", fig.width=7, fig.height=4, fig.align="center"}
 lambda <- 0.01
 x <- 0:20
 plot(x, dpois(x,lambda=lambda), type="h",   
@@ -295,7 +345,7 @@ legend("topright", paste("lambda=",lambda))
 
 $lambda=0.1$
 
-```{r}
+```{r dpois_series_lambda0_1, fig.path="figures/", fig.width=7, fig.height=4, fig.align="center"}
 lambda <- 0.1
 x <- 0:20
 plot(x, dpois(x,lambda=lambda), type="h",   
@@ -307,7 +357,7 @@ legend("topright", paste("lambda=",lambda))
 
 $lambda=1$
 
-```{r}
+```{r dpois_series_lambda1, fig.path="figures/", fig.width=7, fig.height=4, fig.align="center"}
 lambda <- 1
 x <- 0:20
 plot(x, dpois(x,lambda=lambda), type="h",   
@@ -319,7 +369,7 @@ legend("topright", paste("lambda=",lambda))
 
 $lambda=2$
 
-```{r}
+```{r dpois_series_lambda2, fig.path="figures/", fig.width=7, fig.height=4, fig.align="center"}
 lambda <- 2
 x <- 0:20
 plot(x, dpois(x,lambda=lambda), type="h",   
@@ -331,7 +381,7 @@ legend("topright", paste("lambda=",lambda))
 
 $lambda=5$
 
-```{r}
+```{r dpois_series_lambda5, fig.path="figures/", fig.width=7, fig.height=4, fig.align="center"}
 lambda <- 5
 x <- 0:20
 plot(x, dpois(x,lambda=lambda), type="h",   
@@ -343,7 +393,7 @@ legend("topright", paste("lambda=",lambda))
 
 $lambda=5$
 
-```{r}
+```{r dpois_series_lambda5_range40, fig.path="figures/", fig.width=7, fig.height=4, fig.align="center"}
 lambda <- 5
 x <- 0:40
 plot(x, dpois(x,lambda=lambda), type="h",   
@@ -355,7 +405,7 @@ legend("topright", paste("lambda=",lambda))
 
 $lambda=10$
 
-```{r}
+```{r dpois_series_lambda10, fig.path="figures/", fig.width=7, fig.height=4, fig.align="center"}
 lambda <- 10
 x <- 0:(4*lambda)
 plot(x, dpois(x,lambda=lambda), type="h",   
@@ -367,7 +417,7 @@ legend("topright", paste("lambda=",lambda))
 
 $lambda=20$
 
-```{r}
+```{r dpois_series_lambda20, fig.path="figures/", fig.width=7, fig.height=4, fig.align="center"}
 lambda <- 20
 x <- 0:(4*lambda)
 plot(x, dpois(x,lambda=lambda), type="h",   
@@ -379,7 +429,7 @@ legend("topright", paste("lambda=",lambda))
 
 $lambda=30$
 
-```{r}
+```{r dpois_series_lambda30, fig.path="figures/", fig.width=7, fig.height=4, fig.align="center"}
 lambda <- 30
 x <- 0:(2*lambda)
 plot(x, dpois(x,lambda=lambda), type="h",   
@@ -391,7 +441,7 @@ legend("topright", paste("lambda=",lambda))
 
 $lambda=50$
 
-```{r}
+```{r dpois_series_lambda50, fig.path="figures/", fig.width=7, fig.height=4, fig.align="center"}
 lambda <- 50
 x <- 0:(2*lambda)
 plot(x, dpois(x,lambda=lambda), type="h",   
@@ -403,18 +453,19 @@ legend("topright", paste("lambda=",lambda))
 
 $lambda=100$
 
-```{r}
+```{r dpois_series_lambda100, fig.path="figures/", fig.width=7, fig.height=4, fig.align="center"}
 lambda <- 100
 x <- 0:(2*lambda)
 plot(x, dpois(x,lambda=lambda), type="h",   
      col="darkblue", lwd=2, xlab="X",ylab="dpois(x)")
 legend("topright", paste("lambda=",lambda))
 ```
+
 ## Solution: a family of Poisson curves
 
 $lambda=1000$
 
-```{r}
+```{r dpois_series_lambda1000, fig.path="figures/", fig.width=7, fig.height=4, fig.align="center"}
 lambda <- 1000
 x <- 0:(2*lambda)
 plot(x, dpois(x,lambda=lambda), type="h",   
@@ -426,7 +477,7 @@ legend("topright", paste("lambda=",lambda))
 
 $lambda=10000$
 
-```{r}
+```{r dpois_series_lambda10000, fig.path="figures/", fig.width=7, fig.height=4, fig.align="center"}
 lambda <- 10000
 x <- 0:(2*lambda)
 plot(x, dpois(x,lambda=lambda), type="h",   
@@ -438,7 +489,7 @@ legend("topright", paste("lambda=",lambda))
 
 $lambda=100000$
 
-```{r}
+```{r dpois_series_lambda10000_rescaled, fig.path="figures/", fig.width=7, fig.height=4, fig.align="center"}
 plot(95000:105000, dpois(95000:105000,lambda=100000), type="h", col="darkblue", xlab="X",ylab="dpois(x)")
 ```
 
