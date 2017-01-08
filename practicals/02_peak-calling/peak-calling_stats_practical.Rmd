@@ -3,11 +3,18 @@ title: "Stats with R and RStudio"
 author: "Jacques van Helden, Hugo varet and Julie Aubert"
 date: '`r Sys.Date()`'
 output:
-  pdf_document:
+  slidy_presentation:
     fig_caption: yes
-    highlight: zenburn
+    fig_height: 6
+    fig_width: 7
+    highlight: tango
+    incremental: no
+    keep_md: no
+    smaller: yes
+    theme: cerulean
     toc: yes
-    toc_depth: 3
+    toc_float: yes
+    widescreen: yes
   html_document:
     fig_caption: yes
     highlight: zenburn
@@ -28,6 +35,11 @@ output:
     theme: cerulean
     toc: yes
     widescreen: yes
+  pdf_document:
+    fig_caption: yes
+    highlight: zenburn
+    toc: yes
+    toc_depth: 3
   beamer_presentation:
     colortheme: dolphin
     fig_caption: yes
@@ -40,18 +52,6 @@ output:
     slide_level: 2
     theme: Montpellier
     toc: yes
-  slidy_presentation:
-    fig_caption: yes
-    fig_height: 6
-    fig_width: 7
-    highlight: tango
-    incremental: no
-    keep_md: no
-    smaller: yes
-    theme: cerulean
-    toc: yes
-    toc_float: yes
-    widescreen: yes
   word_document:
     toc: yes
     toc_depth: 3
@@ -251,7 +251,7 @@ par(mfrow=c(1,1)) ## Reset default mode
 
 ## Solution: comparing counts per bin between chip-seq and input
 
-```{r fig.width=7, fig.height=7, fig.align="center"}
+```{r fig.width=5, fig.height=5, fig.align="center"}
 plot(input.bedg$counts, chip.bedg$counts, col="darkviolet",
      xlab="Genomic input", ylab="FNR ChIP-seq",
      main="Reads per 200bp bin")
@@ -261,7 +261,7 @@ plot(input.bedg$counts, chip.bedg$counts, col="darkviolet",
 
 In order to better highight the dynamic range, we can use a log-based representation
 
-```{r fig.width=7, fig.height=7, fig.align="center"}
+```{r fig.width=5, fig.height=5, fig.align="center"}
 plot(input.bedg$counts, chip.bedg$counts, col="darkviolet",
      xlab="Genomic input", ylab="FNR ChIP-seq",
      main="Reads per 200bp bin",
@@ -306,7 +306,7 @@ kable(head(count.table)) ## Display the head of the table in a
 
 ## ChIP vs input counts per bin
 
-```{r fig.width=7, fig.height=7}
+```{r fig.width=5, fig.height=5}
 max.counts <- max(count.table[, c("counts.input", "counts.chip")])
 plot(x = count.table$counts.input, xlab="Input counts",
      y = count.table$counts.chip, ylab="ChIP counts",
@@ -320,7 +320,7 @@ Note the differences of $X$ and $Y$ scales!
 
 Log scales better emphasize the dynamic range of the counts. 
 
-```{r fig.width=7, fig.height=7}
+```{r fig.width=5, fig.height=5}
 plot(x = count.table$counts.input, xlab="Input counts per bin",
      y = count.table$counts.chip, ylab="ChIP counts per bin",
      main="ChIP versus input counts (log scale)",
@@ -334,7 +334,7 @@ Read the warnings. What happened?
 - We can add a pseudo-count to avoid -Inf with 0 values.
 - The usual pseudo-count is 1. I prefer 0.01 (this could be negotiated).
 
-```{r fig.width=7, fig.height=7}
+```{r fig.width=5, fig.height=5}
 epsilon <- 0.1 ## Define a small pseudo-count
 plot(x = count.table$counts.input + epsilon, 
      y = count.table$counts.chip + epsilon, 
@@ -343,7 +343,7 @@ plot(x = count.table$counts.input + epsilon,
 
 ## Drawing a diagonal
 
-```{r fig.width=7, fig.height=7}
+```{r fig.width=5, fig.height=5}
 plot(x = count.table$counts.input + epsilon, xlab=paste("Input counts +", epsilon),
      y = count.table$counts.chip + epsilon,  ylab=paste("ChIP counts +", epsilon),
      col="darkviolet", panel.first=grid(), log="xy")
@@ -404,17 +404,21 @@ sum(count.table$counts.input)
 
 The simplest way to "normalize" is to scale input counts by library sum.
 
-```{r fig.width=7, fig.height=5, fig.align="center"}
+```{r libsum_normalisation}
 ## Normalize input counts by library sizes
 count.table$input.scaled.libsize <- count.table$counts.input * sum(count.table$counts.chip)/sum(count.table$counts.input)
+```
 
+**Note:** libsum normalisation is rudimentary and sensitive to outliers, we will see more reliable normalisation methods below. 
+
+## Libsum normalisation result
+
+```{r fig.width=7, fig.height=5, fig.align="center"}
+## Scatter plot after libsum-based normalisation
 plot(x = count.table$input.scaled.libsize + 1, 
      y = count.table$counts.chip + 1, col="darkviolet", log="xy",
-     main="ChIP versus input",
-     xlab="Scaled input counts",
-     ylab="ChIP counts")
-grid()
-abline(a=0, b=1, col="black")
+     main="ChIP versus input", xlab="Scaled input counts", ylab="ChIP counts")
+grid(); abline(a=0, b=1, col="black")
 ```
 
 
@@ -423,15 +427,22 @@ abline(a=0, b=1, col="black")
 ```{r fig.width=7, fig.height=4, fig.align="center"}
 count.table$scaled.ratio.libsum <- (count.table$counts.chip + epsilon ) / (count.table$input.scaled.libsize + epsilon)
 
-hist(count.table$scaled.ratio.libsum, breaks=2000, xlim=c(0, 5), xlab="Count ratios after libsum scaling", main="Count ratio histogram", col="gray", border="gray")
-abline(v=mean(count.table$scaled.ratio.libsum), col="darkgreen", lwd=3)
-abline(v=median(count.table$scaled.ratio.libsum), col="brown", lwd=3, lty="dotted")
-legend("topright", c("mean", "median"), col=c("darkgreen", "brown"), lwd=3, lty=c("solid", "dotted"))
-
 ## Print the mean and median scaled ratios
 mean(count.table$scaled.ratio.libsum)
 median(count.table$scaled.ratio.libsum)
+
 ```
+
+## Mean versus median
+
+```{r fig.width=7, fig.height=4, fig.align="center"}
+hist(count.table$scaled.ratio.libsum, breaks=2000, main="Count ratio histogram", 
+     xlab="Count ratios after libsum scaling", xlim=c(0, 5), col="gray", border="gray")
+abline(v=mean(count.table$scaled.ratio.libsum), col="darkgreen", lwd=3)
+abline(v=median(count.table$scaled.ratio.libsum), col="brown", lwd=3, lty="dotted")
+legend("topright", c("mean", "median"), col=c("darkgreen", "brown"), lwd=3, lty=c("solid", "dotted"))
+```
+
 
 ## Print summary statistics
 
