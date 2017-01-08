@@ -1,0 +1,65 @@
+---
+title: "To do"
+author: "Jacques van Helden"
+date: '`r Sys.Date()`'
+output: html_document
+---
+
+## Infrastructure
+
+### Yum packages
+
+```
+yum install texlive-texmf-xetex-2007-38.el6.noarch
+yum install rsync
+yum install screen
+yum install finger
+```
+
+I get some personal config files
+
+```
+rsync rsat@rsat-tagc.univ-mrs.fr:.screenrc ~/
+```
+
+### Creation of user logins
+
+I create user accounts with the following commands
+
+```
+useradd -p $(echo 'password' \
+  | openssl passwd -1 -stdin) login --shell /bin/bash --group rstudio --home /home/login \
+  --create-home --comment 'Firstname Lastname <email@place> '```
+
+(see excel file for list of participants)
+
+### RStudio + Libraries
+
+- Prepare RStudio VM for EVA15, and note each step -> protocols for local installation
+
+- Libraries
+    - DESeq2
+    - edgeR
+          
+### Datasets
+
+- ChIP-seq: count tables from FruR in E.coli
+    - RNA-seq: count table from tutorial
+    - RNA-seq: yeast 48 replicates -> anlaysis of variance
+    - Put datasets on ftp site + IFB VM
+  
+- RNA-seq
+    - data from the RNA-seq tutorial (Coline)
+    - 2*48-replicate table from Geoff Barton
+  
+## Slides
+
+
+- Carl: fix formula in Fig 5. MACS (Zhang et al. Genome Bil, 2008): FPR = FP / (TP *+ FP*)
+- RStudio quick tour
+- Theoretical distributions of probability
+      - Poisson, Binomial, Hypergeometric, Negative binomial
+      - Formulas: density, CDF + graphical illustrations
+- Peak-calling stats
+- RNA-seq DEG stats
+
