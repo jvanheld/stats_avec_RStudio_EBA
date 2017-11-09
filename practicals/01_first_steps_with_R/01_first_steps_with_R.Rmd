@@ -65,7 +65,18 @@ transition: linear
 ```{r setup, include=FALSE, size="huge"}
 library(knitr)
 ## Default parameters for displaying the slides
-knitr::opts_chunk$set(echo = TRUE, eval=TRUE, fig.width = 7, fig.height = 5, fig.align = "center", size = "tiny", warning = FALSE, results = TRUE, message = FALSE, comment = "")
+knitr::opts_chunk$set(
+  echo = TRUE, 
+  eval=TRUE, 
+  fig.width = 7, 
+  fig.height = 5, 
+  fig.align = "center", 
+  fig.path="figures/", 
+  size = "tiny", 
+  warning = FALSE, 
+  results = TRUE, 
+  message = FALSE, 
+  comment = "")
 ```
 
 
@@ -194,7 +205,7 @@ print(y)
 
 ## Scatter plot
 
-```{r scatter_plot, fig.path="figures/", fig.width=7, fig.height=5, fig.align="center"}
+```{r scatter_plot, fig.width=7, fig.height=5, fig.align="center"}
 x <- -10:10
 y <- x^2
 plot(x,y)
@@ -203,7 +214,7 @@ plot(x,y)
 ## Line plot
 
 
-```{r line_plot, fig.path="figures/", fig.width=7, fig.height=5, fig.align="center"}
+```{r line_plot, fig.width=7, fig.height=5, fig.align="center"}
 x <- -10:10
 y <- x^2
 plot(x,y, type="l")
@@ -249,7 +260,7 @@ print(y) # Check the result
 ## Plotting the Poisson distribution
 
 
-```{r dpois_plot, fig.path="figures/", fig.width=7, fig.height=4, fig.align="center"}
+```{r dpois_plot, fig.width=7, fig.height=4, fig.align="center"}
 x <- 0:14   # Define the X values from 0 to 14
 y <- dpois(x, lambda = 2.5) # Poisson density
 plot(x,y) # Check the result
@@ -284,7 +295,7 @@ A question? Type `?`
 ## Improve the plot: type = histogram
 
 
-```{r dpois_plot_h, fig.path="figures/", fig.width=7, fig.height=4, fig.align="center"}
+```{r dpois_plot_h, fig.width=7, fig.height=4, fig.align="center"}
 x <- 0:14
 lambda <- 2.54
 y <- dpois(x, lambda)
@@ -294,7 +305,7 @@ plot(x,y, type="h")
 ## Improve the plot: Add a title
 
 
-```{r dpois_plot_h_main, fig.path="figures/", fig.width=7, fig.height=4, fig.align="center"}
+```{r dpois_plot_h_main, fig.width=7, fig.height=4, fig.align="center"}
 plot(x,y, type="h", lwd=5, col="blue",
      main="Poisson density")
 ```
@@ -302,7 +313,7 @@ plot(x,y, type="h", lwd=5, col="blue",
 ## Improve the plot: define axis labels
 
 
-```{r dpois_plot_h_xylab, fig.path="figures/", fig.width=7, fig.height=4, fig.align="center"}
+```{r dpois_plot_h_xylab, fig.width=7, fig.height=4, fig.align="center"}
 plot(x,y, type="h", lwd=5, col="blue",
      main="Poisson density",
      xlab="x = number of successes",
@@ -312,7 +323,7 @@ plot(x,y, type="h", lwd=5, col="blue",
 ## Improve the plot: add a legend
 
 
-```{r dpois_plot_h_legend, fig.path="figures/", fig.width=7, fig.height=4, fig.align="center"}
+```{r dpois_plot_h_legend, fig.width=7, fig.height=4, fig.align="center"}
 plot(x,y, type="h", lwd=5, col="blue",
      main="Poisson density",
      xlab="x = number of successes",
@@ -332,7 +343,7 @@ legend("topright", paste("lambda =", lambda))
 
 $lambda=0.01$
 
-```{r dpois_series_lambda0_01, fig.path="figures/", fig.width=7, fig.height=4, fig.align="center"}
+```{r dpois_series_lambda0_01, fig.width=7, fig.height=4, fig.align="center"}
 lambda <- 0.01
 x <- 0:20
 plot(x, dpois(x,lambda=lambda), type="h",   
@@ -344,7 +355,7 @@ legend("topright", paste("lambda=",lambda))
 
 $lambda=0.1$
 
-```{r dpois_series_lambda0_1, fig.path="figures/", fig.width=7, fig.height=4, fig.align="center"}
+```{r dpois_series_lambda0_1, fig.width=7, fig.height=4, fig.align="center"}
 lambda <- 0.1
 x <- 0:20
 plot(x, dpois(x,lambda=lambda), type="h",   
@@ -356,7 +367,7 @@ legend("topright", paste("lambda=",lambda))
 
 $lambda=1$
 
-```{r dpois_series_lambda1, fig.path="figures/", fig.width=7, fig.height=4, fig.align="center"}
+```{r dpois_series_lambda1, fig.width=7, fig.height=4, fig.align="center"}
 lambda <- 1
 x <- 0:20
 plot(x, dpois(x,lambda=lambda), type="h",   
@@ -368,7 +379,7 @@ legend("topright", paste("lambda=",lambda))
 
 $lambda=2$
 
-```{r dpois_series_lambda2, fig.path="figures/", fig.width=7, fig.height=4, fig.align="center"}
+```{r dpois_series_lambda2, fig.width=7, fig.height=4, fig.align="center"}
 lambda <- 2
 x <- 0:20
 plot(x, dpois(x,lambda=lambda), type="h",   
@@ -380,7 +391,7 @@ legend("topright", paste("lambda=",lambda))
 
 $lambda=5$
 
-```{r dpois_series_lambda5, fig.path="figures/", fig.width=7, fig.height=4, fig.align="center"}
+```{r dpois_series_lambda5, fig.width=7, fig.height=4, fig.align="center"}
 lambda <- 5
 x <- 0:20
 plot(x, dpois(x,lambda=lambda), type="h",   
@@ -392,7 +403,7 @@ legend("topright", paste("lambda=",lambda))
 
 $lambda=5$
 
-```{r dpois_series_lambda5_range40, fig.path="figures/", fig.width=7, fig.height=4, fig.align="center"}
+```{r dpois_series_lambda5_range40, fig.width=7, fig.height=4, fig.align="center"}
 lambda <- 5
 x <- 0:40
 plot(x, dpois(x,lambda=lambda), type="h",   
@@ -404,7 +415,7 @@ legend("topright", paste("lambda=",lambda))
 
 $lambda=10$
 
-```{r dpois_series_lambda10, fig.path="figures/", fig.width=7, fig.height=4, fig.align="center"}
+```{r dpois_series_lambda10, fig.width=7, fig.height=4, fig.align="center"}
 lambda <- 10
 x <- 0:(4*lambda)
 plot(x, dpois(x,lambda=lambda), type="h",   
@@ -416,7 +427,7 @@ legend("topright", paste("lambda=",lambda))
 
 $lambda=20$
 
-```{r dpois_series_lambda20, fig.path="figures/", fig.width=7, fig.height=4, fig.align="center"}
+```{r dpois_series_lambda20, fig.width=7, fig.height=4, fig.align="center"}
 lambda <- 20
 x <- 0:(4*lambda)
 plot(x, dpois(x,lambda=lambda), type="h",   
@@ -428,7 +439,7 @@ legend("topright", paste("lambda=",lambda))
 
 $lambda=30$
 
-```{r dpois_series_lambda30, fig.path="figures/", fig.width=7, fig.height=4, fig.align="center"}
+```{r dpois_series_lambda30, fig.width=7, fig.height=4, fig.align="center"}
 lambda <- 30
 x <- 0:(2*lambda)
 plot(x, dpois(x,lambda=lambda), type="h",   
@@ -440,7 +451,7 @@ legend("topright", paste("lambda=",lambda))
 
 $lambda=50$
 
-```{r dpois_series_lambda50, fig.path="figures/", fig.width=7, fig.height=4, fig.align="center"}
+```{r dpois_series_lambda50, fig.width=7, fig.height=4, fig.align="center"}
 lambda <- 50
 x <- 0:(2*lambda)
 plot(x, dpois(x,lambda=lambda), type="h",   
@@ -452,7 +463,7 @@ legend("topright", paste("lambda=",lambda))
 
 $lambda=100$
 
-```{r dpois_series_lambda100, fig.path="figures/", fig.width=7, fig.height=4, fig.align="center"}
+```{r dpois_series_lambda100, fig.width=7, fig.height=4, fig.align="center"}
 lambda <- 100
 x <- 0:(2*lambda)
 plot(x, dpois(x,lambda=lambda), type="h",   
@@ -464,7 +475,7 @@ legend("topright", paste("lambda=",lambda))
 
 $lambda=1000$
 
-```{r dpois_series_lambda1000, fig.path="figures/", fig.width=7, fig.height=4, fig.align="center"}
+```{r dpois_series_lambda1000, fig.width=7, fig.height=4, fig.align="center"}
 lambda <- 1000
 x <- 0:(2*lambda)
 plot(x, dpois(x,lambda=lambda), type="h",   
@@ -476,7 +487,7 @@ legend("topright", paste("lambda=",lambda))
 
 $lambda=10000$
 
-```{r dpois_series_lambda10000, fig.path="figures/", fig.width=7, fig.height=4, fig.align="center"}
+```{r dpois_series_lambda10000, fig.width=7, fig.height=4, fig.align="center"}
 lambda <- 10000
 x <- 0:(2*lambda)
 plot(x, dpois(x,lambda=lambda), type="h",   
@@ -488,7 +499,7 @@ legend("topright", paste("lambda=",lambda))
 
 $lambda=100000$
 
-```{r dpois_series_lambda10000_rescaled, fig.path="figures/", fig.width=7, fig.height=4, fig.align="center"}
+```{r dpois_series_lambda10000_rescaled, fig.width=7, fig.height=4, fig.align="center"}
 plot(95000:105000, dpois(95000:105000,lambda=100000), type="h", col="darkblue", xlab="X",ylab="dpois(x)")
 ```
 
