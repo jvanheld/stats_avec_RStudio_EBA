@@ -3,13 +3,6 @@ title: "Peak calling statistics<br>Solutions to the exercise"
 author: "Jacques van Helden"
 date: '`r Sys.Date()`'
 output:
-  pdf_document:
-    fig_caption: yes
-    highlight: zenburn
-    toc: yes
-    toc_depth: 3
-  md_document:
-    variant: markdown_github
   html_document:
     fig_caption: yes
     highlight: zenburn
@@ -17,6 +10,13 @@ output:
     toc: yes
     toc_depth: 3
     toc_float: yes
+  md_document:
+    variant: markdown_github
+  pdf_document:
+    fig_caption: yes
+    highlight: zenburn
+    toc: yes
+    toc_depth: 3
   word_document:
     toc: yes
     toc_depth: 3
@@ -317,10 +317,9 @@ abline(a=0,b=1) ## Plot the diagonal to compare counts between samples
 grid()
 
 ## Roughly surround a region of interest to be discussed below 
-abline(h=500, col="red")
-abline(v=c(100,200),col="red", lty="dotted")
+abline(h=500, col="red", lty="dashed")
+abline(v=c(80,300),col="red", lty="dashed")
 ```
-
 
 
 The log plot shows a more or less linear relationship between test and input counts for the low frequencies ($x <100$). It also highlights the fact that the windows that have a very high number of reads (e.g. $n \ge 500$) in the test library have an input count comprised between 100 and 200. 
@@ -337,7 +336,7 @@ hist(chip.counts, breaks=c(seq(from=0,to=300,by=5),max.count),
      xlab="Reads per window", ylab="Number of windows")
 
 hist(norm.input, breaks=c(seq(from=0,to=300,by=5),max.count), 
-     xlim=c(0,300),freq=FALSE, col="gray",
+     xlim=c(0,300),freq=TRUE, col="gray",
      main="Read counts in normalized input sample",
     xlab="Reads per window", ylab="Number of windows")
 
@@ -411,6 +410,65 @@ read.stats$log.fold <- log(base=10, read.stats$fold)
 
 head(read.stats)
 ```
+
+
+## P-value of the test reads, using a Poisson distribution with local lambda estimate (explain your model)
+
+The simplest way to compute a P-value is to use the Poisson distribution, which requires a single parameter ($\lambda$) indicating the expected number of hits.
+
+We already computed the normalized input, which indicates the number of reads we would expect in each window, assuming the factor would not bind anything specific. We can thus use this normalized input as a window-specific estimator of the $lambda_i$ parameter. 
+
+$$\lambda_i = x_{\text{norm.input},i} = x_{\text{input},i} \cdot \frac{n_{\text{FNR}}}{n_{\text{input}}}$$
+
+
+
+```{r}
+
+# sum(read.stats$norm.input != read.stats$input.counts*m/n) == 0
+## Compute the Poisson p-value
+read.stats$ppois <- ppois(q=read.stats$counts-1, 
+                          lambda=read.stats$norm.input, 
+                          lower.tail=FALSE, log=FALSE)
+
+
+```
+
+## P-value of the test reads, using a binomial distribution (explain your model).
+
+For the binomial, we can consider each read as a trial, which can either result in a "success" if the read falls within the window of interest, and a "failure" otherwise. Our input library will serve us to estimate a window-specific prior probability ($p^{window}_i$), indicating the probability for a read to fall within the $i^{th}$ positional window.
+
+$$\hat{p^{window}_i} = \frac{x_{i}^{input}}{\sum_{j=1}^{w}x_{j}^{input}}$$
+
+
+```{r}
+
+## Prior probability for a read to fall within a given window
+read.stats$window.prior <- input.counts/sum(input.counts)
+print (range(read.stats$window.prior))
+hist(read.stats$window.prior, breaks=100, col="#DDFFDD")
+abline(v=mean(read.stats$window.prior), lwd=3, col="darkgreen")
+
+## Prior probability per window if one would assume equiprobability (which we don't)
+equi.p = (1/nrow(read.stats))
+print(paste("Equiprobable window prior =", equi.p))
+
+## Verification: this equiprobable prior should equal the mean probability of the window-specific priors
+mean.p = mean(read.stats$window.prior)
+print(paste("Mean window prior = ", mean.p))
+print(paste("Equality ? ", mean.p == equi.p))
+
+
+## Compute the P-value of the test reads, using a binomial distribution (explain your model).
+read.stats$pbinom <- pbinom(q=chip.counts-1, 
+                            size=sum(chip.counts), 
+                            prob=read.stats$window.prior, 
+                            lower=FALSE, log=FALSE)
+
+## Display the first rows of the stats table
+head(read.stats)
+
+```
+
 
 
 ## P-value of the test reads, using a hypergeometric distribution (explain your model)
@@ -499,65 +557,6 @@ read.stats$phyper.bis <- phyper(chip.counts-1,
 
 head(read.stats)
 ```
-
-
-## P-value of the test reads, using a Poisson distribution with local lambda estimate (explain your model)
-
-The simplest way to compute a P-value is to use the Poisson distribution, which requires a single parameter ($\lambda$) indicating the expected number of hits.
-
-We already computed the normalized input, which indicates the number of reads we would expect in each window, assuming the factor would not bind anything specific. We can thus use this normalized input as a window-specific estimator of the $lambda_i$ parameter. 
-
-$$\lambda_i = x_{\text{norm.input},i} = x_{\text{input},i} \cdot \frac{n_{\text{FNR}}}{n_{\text{input}}}$$
-
-
-
-```{r}
-
-# sum(read.stats$norm.input != read.stats$input.counts*m/n) == 0
-## Compute the Poisson p-value
-read.stats$ppois <- ppois(q=read.stats$counts-1, 
-                          lambda=read.stats$norm.input, 
-                          lower.tail=FALSE, log=FALSE)
-
-
-```
-
-## P-value of the test reads, using a binomial distribution (explain your model).
-
-For the binomial, we can consider each read as a trial, which can either result in a "success" if the read falls within the window of interest, and a "failure" otherwise. Our input library will serve us to estimate a window-specific prior probability ($p^{window}_i$), indicating the probability for a read to fall within the $i^{th}$ positional window.
-
-$$\hat{p^{window}_i} = \frac{x_{i}^{input}}{\sum_{j=1}^{w}x_{j}^{input}}$$
-
-
-```{r}
-
-## Prior probability for a read to fall within a given window
-read.stats$window.prior <- input.counts/sum(input.counts)
-print (range(read.stats$window.prior))
-hist(read.stats$window.prior, breaks=100, col="#DDFFDD")
-abline(v=mean(read.stats$window.prior), lwd=3, col="darkgreen")
-
-## Prior probability per window if one would assume equiprobability (which we don't)
-equi.p = (1/nrow(read.stats))
-print(paste("Equiprobable window prior =", equi.p))
-
-## Verification: this equiprobable prior should equal the mean probability of the window-specific priors
-mean.p = mean(read.stats$window.prior)
-print(paste("Mean window prior = ", mean.p))
-print(paste("Equality ? ", mean.p == equi.p))
-
-
-## Compute the P-value of the test reads, using a binomial distribution (explain your model).
-read.stats$pbinom <- pbinom(q=chip.counts-1, 
-                            size=sum(chip.counts), 
-                            prob=read.stats$window.prior, 
-                            lower=FALSE, log=FALSE)
-
-## Display the first rows of the stats table
-head(read.stats)
-
-```
-
 
 
 ## 7.  Draw some dot plots to compare the different statistics (fold enrichment, log-fold, p-values with the different models).
