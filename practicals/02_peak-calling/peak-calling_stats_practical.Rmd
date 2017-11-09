@@ -236,8 +236,8 @@ Does the background look homogeneous? How do you interpret its shape?
 
 ## Solution: comparing chip-seq and background density profiles
 
-```{r fig.width=8, fig.height=4}
-par(mfrow=c(1,2)) ## Draw two panels besides each other
+```{r fig.width=8, fig.height=6}
+par(mfrow=c(2,1)) ## Draw two panels on top of each other
 plot(chip.bedg[, c("midpos", "counts")], type="h", 
      col="darkgreen", xlab="Genomic position (200bp bins)", 
      ylab= "Reads per bin",
