@@ -1,0 +1,143 @@
+---
+title: "R & bash bilinguism"
+author: "Jacques van Helden"
+date: '`r Sys.Date()`'
+output:
+  html_document:
+    code_folding: show
+    fig_caption: yes
+    highlight: zenburn
+    theme: cerulean
+    toc: yes
+    toc_depth: 3
+    toc_float: yes
+  beamer_presentation:
+    colortheme: dolphin
+    fig_caption: yes
+    fig_height: 6
+    fig_width: 7
+    fonttheme: structurebold
+    highlight: tango
+    incremental: no
+    keep_tex: no
+    slide_level: 2
+    theme: Montpellier
+    toc: yes
+  ioslides_presentation:
+    colortheme: dolphin
+    fig_caption: yes
+    fig_height: 6
+    fig_width: 7
+    fonttheme: structurebold
+    highlight: tango
+    incremental: no
+    keep_md: no
+    smaller: yes
+    theme: cerulean
+    toc: yes
+    widescreen: yes
+  pdf_document:
+    fig_caption: yes
+    highlight: zenburn
+    toc: yes
+    toc_depth: 3
+  slidy_presentation:
+    fig_caption: yes
+    fig_height: 6
+    fig_width: 7
+    highlight: tango
+    incremental: no
+    keep_md: no
+    smaller: yes
+    theme: cerulean
+    toc: yes
+    toc_float: yes
+    widescreen: yes
+  word_document:
+    toc: yes
+    toc_depth: 3
+subtitle: Ecole de Bioinformatique AVIESAN-IFB, Roscoff 2017
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+## Default parameters for displaying the slides
+knitr::opts_knit$set(
+  echo = TRUE, 
+  eval=FALSE, 
+  fig.width = 7, 
+  fig.height = 5, 
+  fig.align = "center", 
+  fig.path = "figures/",
+  size = "tiny", 
+  warning = FALSE, 
+  results = FALSE, 
+  message = FALSE, 
+  # root.dir = dir.tuto,
+  comment = "")
+```
+
+## Gestion des dossiers et fichiers
+
+
+| Fonction | Linux | R |
+|-----------------------|-----------------------|-----------------------|
+| Dossier actuel (où suis-je ?) | `pwd`| `getwd()`|
+| Créer un dossier | `mkdir`| `dir.create()`|
+| Se déplacer vers un dossier | `cd`| `setwd()`|
+| Liste des fichiers | `ls`| `list.files()`|
+| Aide sur une fonction | `man`| `help()`|
+| Effacer un fichier | `rm` | `file.remove()` |
+| Renommer un fichier | `mv` | `file.remname()` |
+
+
+### Exemples
+
+#### Aide de la fonction "list files"
+ 
+```{bash eval=FALSE}
+man ls
+```
+
+```{r}
+help(list.files)
+```
+
+ 
+ 
+#### Créer un dossier de façon récursive
+
+```{bash eval=FALSE}
+# Créer un dossier
+mkdir -p ~/R_tuto/results 
+
+# Créer un fichier test dans ce dossier
+echo "Hello bash!" > ~/R_tuto/results/hello_bash.txt 
+
+# Lister les fichiers de ce dossier
+ls -l ~/R_tuto/results
+
+# Effacer le fichier test
+rm  ~/R_tuto/results/hello_bash.txt 
+```
+
+```{r}
+# Créer un dossier
+dir.create("~/R_tuto/results", 
+           recursive=TRUE, 
+           showWarnings=FALSE)
+
+# Créer un fichier test dans ce dossier
+write("Hello R!", file = "~/R_tuto/results/hello_R.txt")
+
+# Lister les fichiers de ce dossier
+list.files("~/R_tuto/results")
+
+system("more ~/R_tuto/results/hello_R.txt")
+
+# Effacer le fichier test
+file.remove("~/R_tuto/results/hello_R.txt")
+```
+
+
+
