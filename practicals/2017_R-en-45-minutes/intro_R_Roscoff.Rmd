@@ -1,0 +1,982 @@
+---
+title: "Introduction à R... en 1h45"
+author: "Hugo Varet (Institut Pasteur)"
+date: '`r Sys.Date()`'
+output:
+  html_document:
+    code_folding: show
+    fig_caption: yes
+    highlight: zenburn
+    theme: cerulean
+    toc: yes
+    toc_depth: 3
+    toc_float: yes
+  beamer_presentation:
+    colortheme: dolphin
+    fig_caption: yes
+    fig_height: 6
+    fig_width: 7
+    fonttheme: structurebold
+    highlight: tango
+    incremental: no
+    keep_tex: no
+    slide_level: 2
+    theme: Montpellier
+    toc: yes
+  ioslides_presentation:
+    colortheme: dolphin
+    fig_caption: yes
+    fig_height: 6
+    fig_width: 7
+    fonttheme: structurebold
+    highlight: tango
+    incremental: no
+    keep_md: no
+    smaller: yes
+    theme: cerulean
+    toc: yes
+    widescreen: yes
+  pdf_document:
+    fig_caption: yes
+    highlight: zenburn
+    toc: yes
+    toc_depth: 3
+  slidy_presentation:
+    fig_caption: yes
+    fig_height: 6
+    fig_width: 7
+    highlight: tango
+    incremental: no
+    keep_md: no
+    smaller: yes
+    theme: cerulean
+    toc: yes
+    toc_float: yes
+    widescreen: yes
+  word_document:
+    toc: yes
+    toc_depth: 3
+subtitle: Ecole de Bioinformatique AVIESAN-IFB, Roscoff 2017
+---
+
+```{r setup, include=FALSE}
+
+## Dossier spécial pour le tuto
+## Les données doivent y avoir été téléchargées préalablement
+# dir.tuto <- file.path("~", "intro_R")
+# dir.create(dir.tuto, showWarnings = FALSE, recursive = TRUE)
+# setwd(dir.tuto)
+# getwd()
+# list.files()
+
+library(knitr)
+## Default parameters for displaying the slides
+knitr::opts_knit$set(
+  echo = TRUE, 
+  eval=TRUE, 
+  fig.width = 7, 
+  fig.height = 5, 
+  fig.align = "center", 
+  fig.path = "figures/",
+  size = "tiny", 
+  warning = FALSE, 
+  results = TRUE, 
+  message = FALSE, 
+  # root.dir = dir.tuto,
+  comment = "")
+```
+
+
+
+## Quelques liens utiles
+
+- Projet R: <http://www.r-project.org>
+- Télécharger R + des bibliothèques de fonctions: <http://cran.r-project.org>
+- L'environnement de travail RStudio: <https://www.rstudio.com>
+- Bioconductor, des bibliothèques de fonction pour la biologie: <http://www.bioconductor.org>
+- R cheat sheeet (antisèche): <https://www.rstudio.com/wp-content/uploads/2016/10/r-cheat-sheet-3.pdf>
+- R basics and easy: <http://www.sthda.com/english/wiki/r-basics-quick-and-easy>
+- Google R style guide: <https://google.github.io/styleguide/Rguide.xml#identifiers>
+
+## R vu comme une calculatrice
+
+Le symbole ">" est l'invite de commande ("prompt") de **R**. 
+Ilsignifie que R est prêt à recevoir une nouvelle instruction. Exemple:
+
+
+```{r eval=TRUE, error=FALSE}
+## Quelques calculs
+2 + 3
+2 * 3
+2 / 3
+```
+
+## Terminez votre commande !
+
+Quand vous entrez une commande incomplète, R affiche une invite `+`, qui indique qu'il attend que vous complétiez votre commande
+
+```{r eval=FALSE, error=FALSE}
+2 *
+
+```
+
+<font color="red">Si vous êtes coincés</font> avec une invite `+`,  vous devez terminer la commande pour vous tirer d'affaire. Dans ce cas-ci, tapez par exemple taper `7` puis ENTER.
+
+## Pendant le calcul, pas d'invite de commande
+
+Si on envoie à R un calcul qui dure un certain temps, pendant le calcul il n'affiche aucun symbole d'invite de commande. 
+
+Un exemple de commande qui prend quelques secondes (nous expliquerons plus bas en quoi consistent ces fonctions). 
+
+**Note:** le symbole `#` permet d'écrire des commentaires, i.e. du texte non interprété par R. 
+
+
+```{r}
+## Calculer la moyenne de 100 millions de nombres 
+## tirés au hasard selon une distribution normale
+mean(rnorm(100000000))
+```
+
+Pendant quelques secondes rien ne se passe ... puis la réponse s'affiche. 
+
+## Utiliser des variables
+
+Le symbole `<-` assigne une valeur à une variable. Si cette variable n'a pas encore déclarée, elle est créée au passage (un espace mémoire lui est réservé).
+
+
+```{r}
+a <- 2  ## Assignation d'une valeur à une variable
+b = 3   ## Notation équivalente acceptée mais pas recommandée
+```
+
+## Nommer ses variables avec des noms informatifs
+
+Plutôt que a,b,c , on recommande de nommer les varables de façon explicite
+
+```{r}
+resultat <- a * b + a + b  ## Le résultat est stocké dans une variable nommée resultat 
+print(resultat)
+
+```
+
+Attention ! Les noms de variables sont sensibles à la casse !
+La commande suivante retourne une erreur. 
+
+```{r eval=FALSE}
+print(Resultat)
+```
+
+<font color='red'>Error in print(Resultat) : object 'Resultat' not found</font>
+
+
+
+## Ne pas exagérer dans la longueur des noms de variables sinon cela nuit à la lisibilité du code, comme quand on fait des titres à rallonge qui n'aident pas non plus
+
+
+```{r}
+ma_nouvelle_variable_avec_un_nom_a_rallonge <- 10
+```
+
+
+## Noms réservés
+
+Attention: certains noms sont déjà utilisés pour des fonctions/objets **R**. 
+Il ne faut donc pas les utiliser comme noms de variables. On les qualifie de **noms réservés**. 
+
+
+```{r eval=FALSE}
+c # créer un vecteur
+t # transposer une matrice
+sum # fonction somme
+mean # fonction moyenne
+
+TRUE # booléen
+FALSE # booléen
+T # booléen
+F # booléen
+
+NA # not available
+NaN # not a number (par exemple log(-1))
+Inf # infini (par exemple 1/0)
+NULL # objet nul
+
+pi # 3.14...
+letters # 26 lettres minuscules
+LETTERS # 26 lettres majuscules
+```
+
+# Types de données
+
+## Données numériques
+
+Par défaut les nombres sont considérés comme des variables numériques de type "floating point" (variables réelles), même si leur valeur particulière est entière.
+
+```{r}
+# "double precision floating point numbers"
+x <- 3
+print(x)
+mode(x)
+typeof(x)
+```
+
+On peut cependant explicitement déclarer une variable entière avec `as.integer()`
+
+```{r}
+y <- as.integer(2)
+print(y)
+mode(y)
+typeof(y)
+```
+
+Intérêt: les variables de type "Integer" utilisent moins d'espace mémoire que les "Floating point". 
+
+## Chaînes de charactères
+
+Les variables de type "character" permettent de stocker des chaînes de caractères. 
+
+
+```{r}
+x <- "chaîne de caractères, toujours entre guillemets"
+print(x)
+y <- 'ou avec des guillemets simples'
+print(y)
+
+mode(x)                  ## type de contenu de la variable x
+nchar(x)                 ## lontgueur d'une chaîne de caractères
+paste(x, y, sep=" / ")   ## concaténation de variables de type character
+
+```
+
+## Variables Booléennes (logiques, binaires)
+
+```{r}
+x <- TRUE # ou T ou FALSE ou F
+print(x)
+mode(x)
+
+# sera utile pour tester des choses :
+# if (condition) {
+#   faire ça
+# } else {
+#   faire autre chose
+# }
+
+```
+
+# Structures de données
+
+## Vecteurs
+
+Un vecteur permet de stocker dans une seule variable une liste d'élements du même type (numeric, character...).
+
+Un vecteur peut contenir des valeurs de différents types: entiers, réells, Booléens, char, ...
+
+```{r}
+u <- c(2, 4, 5, 1)
+print(u)
+v <- c(10, 5, 2, 2)
+print(v)
+w <- c("Pierre", "Paul", "Jacques", "Henri")
+print(w)
+l <- c(TRUE, FALSE, FALSE, TRUE)
+print(l)
+```
+
+## Caractéristiques d'un vecteur
+
+```{r}
+length(u)
+mode(u)
+mode(w)
+mode(l)
+```
+
+## Sélection/suppression d'éléments d'un vecteur
+
+```{r}
+u[2]
+u[-2]
+u[c(1, 3)]
+u[l]
+u >= 3
+u[which(u >= 3)]
+v %in% c(2, 5)
+v[which(v %in% c(2, 5))]
+```
+
+## Opérations sur des vecteurs
+
+```{r}
+sort(u)
+summary(u)
+sum(u)
+mean(u)
+u + v
+u * v
+u / v
+cbind(u, v)
+rbind(u, v)
+```
+
+## Création de séquences de nombres
+
+```{r}
+1:10
+seq(from=1, to=100, by=10)
+seq(from=1, to=100, length=4)
+rep(x=c(1, 2), times=3)
+rep(x=c(1, 2), each=3)
+```
+
+## Valeurs non définies (NA)
+
+```{r}
+u <- c(4, NA, 5, 2, NA, 3)
+mean(u)
+mean(u, na.rm=TRUE)
+```
+
+## Facteurs
+
+Les structures de données de type `factor` permettent de traiter des listes d'éléments dont les valeurs appartiennent à un ensemble défini. Ces valeurs sont indexées pour assurer une efficacité maximale du traitement informatique.  
+
+```{r}
+## Un vecteur
+mentions <- c("Passable", "AB", "AB", "B", "TB", "TB", "Passable", "B", "Passable", "TB")
+print(mentions)
+
+# vecteur avec des catégories
+f <- factor(mentions)
+print(f)    # Afficher le contenu du facteur
+levels(f)   # Enumérer les catégories du facteur
+table(f)    # Dénombrer les éléments par catégorie
+```
+
+## Définir un ordre sur les niveaux d'un facteur
+
+
+```{r}
+# notion d'ordre
+f <- factor(mentions, levels=c("Passable", "AB", "B", "TB"))
+print(f)    # Afficher le contenu du facteur
+levels(f)   # Enumérer les catégories du facteur
+table(f)    # Dénombrer les éléments par catégorie
+```
+
+## Traitement des valeurs non-assignées (NA)
+
+
+```{r}
+# NA et catégories non représentées
+f <- factor(c("Passable", NA, "AB", "AB", NA, "B"), levels=c("Passable", "AB", "B", "TB"))
+print(f)
+levels(f)
+table(f)   # Où sont passées les valeurs NA ?
+
+## Imprimer les valeurs NA seulement si elles existent
+table(f, useNA="ifany") 
+```
+
+## Matrices
+
+```{r}
+# tableau à N lignes et P colonnes avec des éléments du même type (numeric, character...)
+m <- matrix(rnorm(30), nrow=6, ncol=5)
+print(m)
+n <- matrix(c("a","b","c","d","e","f"), ncol=3, byrow=TRUE)
+print(n)
+
+```
+
+## Caractéristiques d'une matrice
+
+```{r}
+# caractéristiques d'une matrice
+ncol(m)
+nrow(m)
+dim(m)
+length(m)
+mode(m)
+mode(n)
+
+```
+
+## Opérations sur des matrices
+
+```{r}
+# opérations sur des matrices
+mat1 <- matrix(1:6, nrow=2, ncol=3)
+mat2 <- matrix(rnorm(6), nrow=2, ncol=3)
+print(mat1)
+print(mat2)
+```
+
+## Elément par élément
+
+```{r}
+# élément par élément
+mat1 + mat2
+mat1 * mat2
+```
+
+## Produit matriciel (attention aux dimensions)
+
+```{r}
+# produit matriciel (attention aux dimensions)
+mat1 %*% t(mat2)
+t(mat1) %*% mat2
+```
+
+## Somme, moyenne, ...
+
+```{r}
+# somme, moyenne, ...
+sum(mat1) # de tous les éléments
+rowSums(mat1) # des éléments de chaque ligne
+colSums(mat1) # des éléments de chaque colonne
+mean(mat1)
+rowMeans(mat1)
+colMeans(mat1)
+
+```
+
+## Sélection/suppression d'éléments d'une matrice
+
+```{r}
+# sélection/suppression d'éléments d'une matrice
+mat1[, c(2, 3)]
+mat1[1,]
+mat1[1, c(2, 3)]
+```
+
+## Structures de données de type liste
+
+```{r}
+# permet de stocker des objets de types/longueurs différents
+l1 <- list(n = c(TRUE, FALSE), 
+           v = c(3, 4), 
+           r = c("toto","plop", "tutu"), 
+           mat1)
+print(l1)
+length(l1)
+names(l1)
+```
+
+## Liste contenant une liste
+
+```{r}
+# liste contenant une liste
+l2 <- list(a="chaîne de caractères", l1=l1)
+print(l2)
+
+```
+
+## Extraction d'éléments d'une liste
+
+```{r}
+# extraction d'éléments d'une liste
+l1$n
+l2$l1
+l2$l1$v
+l2[1]
+l2[[1]]
+is.list(l2[1])
+is.list(l2[[1]])
+```
+
+## Strctures de données de type data.frame
+
+```{r}
+# tableau dont les colonnes ne sont pas nécessairement du même type (numeric, character...)
+d <- data.frame(nom=c("Pierre", "Paul", "Henri", "Mathieu"), 
+                taille=c(165, 168, 163, 170), 
+                poids=c(58, 60, 62, 68))
+print(d)
+class(d)
+typeof(d) # une data.frame est un cas particulier d'une liste
+
+```
+
+## Caractéristiques d'une data.frame
+
+```{r}
+# caractéristiques d'une data.frame
+ncol(d)
+nrow(d)
+names(d)
+length(d)
+
+```
+
+## Sélection de colonnes
+
+```{r}
+# sélection de colonnes
+d$taille
+d[, "taille"]
+d[, c("nom", "taille")]
+
+```
+
+## Sélection de lignes
+
+```{r}
+# sélection de lignes
+d[c(1, 3:4), ]
+d$nom == "Pierre"
+d[which(d$nom == "Pierre"),]
+
+```
+
+## Résumé statistique
+
+```{r}
+# résumé statistique
+summary(d)
+
+```
+
+## Fusion de deux data frames
+
+```{r}
+# fusion de deux data frames
+d2 <- data.frame(nom=c("Paul","Henri","Louis"), age=c(34, 29, 47))
+print(d2)
+merge(x=d, y=d2, by="nom")
+merge(x=d, y=d2, by="nom", all=TRUE)
+merge(x=d, y=d2, by="nom", all.x=TRUE)
+merge(x=d, y=d2, by="nom", all.y=TRUE)
+
+```
+
+## Création d'une nouvelle variable
+
+
+```{r}
+# création d'une nouvelle variable
+print(d)
+d$age <- c(35, 42, 31, 28)
+d$classe_poids <- ifelse(test=d$poids >= 60, yes=">=60", no="<60")
+print(d)
+
+```
+
+# A l'aide
+
+
+## Aide dans R
+
+```{r}
+help(read.table)
+?read.table
+```
+
+## Aide sur le web
+
+- Google !!!
+- plein de forums dédiés: par exemple <https://stackoverflow.com/>
+- mailing list: <https://www.r-project.org/mail.html>
+- spéficique Bioconductor: <https://support.bioconductor.org/>
+
+## Aide ici
+
+- les formateurs !
+
+# Espace de travail
+
+
+## Où suis-je ? 
+
+La commande **R** `getwd()` est équivalente de la commande Unix `pwd` vue hier. 
+
+
+
+```{r}
+# où suis-je ? équivalent de la commande Unix 'pwd'
+getwd()
+
+```
+
+| R | Unix |
+|-------------|------------|
+| `getwd()` | `pwd` |
+
+## Où vais-je ? 
+
+La commande **R** `setwd()` est équivalente de la commande Unix `cd` vue hier. 
+
+```{r eval=FALSE}
+# changement de répertoire courant: équivalent de la commande unix 'cd <path>'
+
+# Chemin relativ
+setwd("chemin/acces/au/nouveau/repertoire/")
+
+# Chemin absolu
+setwd("/home/hugo/chemin/acces/au/nouveau/repertoire/")
+```
+
+| R | Unix |
+|-------------|------------|
+| `setwd()` | `cd` |
+
+# Lire et écrire des données
+
+## Quuelques manipulations de fichiers
+
+| R | Unix |
+|-------------|------------|
+| `list.files()` | `ls` |
+| `file.copy()` | `cp` |
+
+```{r}
+# quelques manipulations de fichiers
+f <- list.files(path="/projet/sbr/ggb/intro_R/", full.names=TRUE)
+print(f)
+file.copy(from=f, to=getwd())
+```
+
+Vérifier ensuite que les fichiers ed données ont bien été copiés dans l'espace de travail. 
+
+```{r}
+list.files(path=getwd())
+
+list.files() ## Commande équivalente, plus légère
+```
+
+
+## Charger les données à partir d'un fichier texte
+
+La commande `read.table()` permet de charger le contenu d'un fichier dans une variable. 
+
+Le fichier `rna_seq.txt` contient des valeurs séparées par des tabulations (symbole `\t`). 
+
+```{r}
+# Charger le fichier rna_seq
+rna <- read.table("rnaseq_data.txt", sep="\t", header=TRUE)
+print(rna)        # Vérifier le contenu
+print(head(rna))  # N'imprimer que le début du fichier
+
+```
+
+
+## Charger les données à partir d'un fichier type CSV
+
+Le fichier `rna_seq.csv` contient des valeurs séparées par des points-virgules (en dépit de son nom "comma-separated values"). 
+
+- L'option `sep` permet de spécifier un séparateur de colonnes.
+- L'option `col.names` permet d'assigner des noms aux colonnes pendant la lecture des données. 
+
+
+```{r}
+# charger le fichier rnaseq_data.csv
+rna2 <- read.table(
+  "rnaseq_data.csv", sep=";", header=FALSE, 
+  col.names=c("geneid","name","WT1","WT2","WT3","KO1","KO2","KO3"))
+print(head(rna2))
+
+```
+
+## Ecriture d'une table de données dans un fichier texte
+
+
+```{r}
+# exporter des données dans un fichier (qui sera écrasé s'il existe déjà !)
+write.table(rna, file="rnaseq_export.txt", sep=" ", col.names=FALSE, row.names=FALSE)
+
+```
+
+
+# Environnement R
+
+## Liste des objets présents dans l'environnement R
+
+```{r}
+# Liste des objets présents dans l'environnement R
+ls()
+```
+
+## Suppression d'objets de la mémoire
+
+```{r}
+# Suppression d'un objet (utile si particulièrement lourd)
+a <- 3
+print(a)
+```
+
+```{r eval=FALSE}
+rm(a)
+print(a)
+```
+
+<font color="red">Error in print(a) : object 'a' not found</font>
+
+
+```{r}
+a <- 3
+print(a)
+
+```
+
+## Sauvegarde de tout l'environnement
+
+La commande `save.image()` enregistre sur disque une copie de l'environnement complet, c'est-à-dire tous les objets existant dans l'espace mémoire de **R**. 
+
+```{r}
+# sauvegarde de tout l'environnement, i.e. tous les objets existants
+save.image(file="mon_environnement.RData")
+
+```
+
+## Suppression de tous les éléments présents dans la session R
+
+<font color="red">**Attention**</font>, en faisant ceci on perd tout le résultat du travail précédent (chargement des tables de comptage RNA-seq, ...)
+
+```{r}
+# suppression de tous les éléments présents dans la session R
+rm(list=ls())
+ls()                              # Vérification: tout a disparu :-(
+load("mon_environnement.RData")   # On recharge l'environnement
+ls()                              # Vérification: tout est revenu :-)
+
+```
+
+## Sauvegarde d'un objet spécifique
+
+```{r}
+# Vérifions le contenu de la variable a
+print(a)
+
+# sauvegarde d'un objet spécifique
+save(a, file="objet_a.RData")
+
+```
+
+## Chargement d'un objet/environnement
+
+```{r eval=FALSE}
+# Effacçons le contenu de la variable a
+rm(a)
+print(a)
+```
+<font color="red">Error in print(a) : object 'a' not found</font>
+
+```{r}
+# chargement d'un objet/environnement
+load("objet_a.RData")
+print(a)
+
+```
+
+# Graphiques
+
+## Nuage de points (XY plot)
+
+
+```{r}
+# plot y vs x
+plot(x=d$taille, y=d$poids)
+plot(formula=d$poids ~ d$taille)
+plot(formula=poids ~ taille, data=d)
+```
+
+## Boîte à moustaches (boxplot)
+
+```{r}
+# boite à moustache d'une série de valeurs
+boxplot(d$poids)
+
+```
+
+## Histogramme
+
+```{r}
+# histogramme d'une série de valeurs
+hist(d$poids)
+
+```
+
+## Diagramme en bâtons (barplot)
+
+```{r}
+# diagramme en bâtons
+table(d$classe_poids)
+barplot(table(d$classe_poids), col=c("lightblue","orange"))
+
+```
+
+## Personnalisation des graphiques
+
+```{r}
+# customisation rapide
+plot(formula=poids ~ taille, data=d, pch=16, col="red",
+     main="Poids vs taille de 4 individus", xlab="Taille (cm)", ylab="Poids (kg)")
+
+```
+
+## Couleurs disponibles
+
+```{r}
+# liste des couleurs disponibles
+colors()
+
+```
+# Notions basiques de programmation
+
+## Fonctions
+
+```{r}
+#####################################
+#             fonctions             #
+#####################################
+ma_fonction <- function(x, y, z=0){
+  resultat <- x + y + z
+  return(resultat)
+}
+
+ma_fonction(x=100, y=10)
+ma_fonction(100, 10, 1000)
+ma_fonction(z=10000, x=10, y=100)
+
+```
+
+## Condition
+
+```{r}
+#####################################
+#             condition             #
+#####################################
+# quelques opérateurs
+2 < 3
+2 >= 2
+2 != 3
+4 == 4
+2 == 3 | 3 == 3
+2 == 3 & 3 == 3
+
+a <- 1
+if (a == 1){
+  print("a est bien égal à 1")
+} else{
+  print("a n'est pas égale à 1")
+}
+
+```
+
+## Attention: une seule chose doit être testée
+
+```{r}
+# attention: une seule chose doit être testée
+v <- c(1, 3, 0)
+v == 3
+if (v == 3){
+  print("v est égal à 3")
+} else{
+  print("v n'est pas égal à 3")
+}
+
+```
+
+## Boucles
+
+```{r}
+for (i in 1:6){
+  phrase <- paste("Voici le nombre", i)
+  print(phrase)
+}
+
+prenoms <- c("pierre", "paul", "jacques", "louis")
+for (i in 1:length(prenoms)){
+  phrase <- paste("il ou elle s'appelle", prenoms[i])
+  print(phrase)
+}
+
+for (p in prenoms){
+  phrase <- paste("il ou elle s'appelle", p)
+  print(phrase)
+}
+
+```
+
+## While (tant que)
+
+
+```{r}
+# tant que
+a <- 1
+while (a < 4){
+  print(paste("a est égal à", a))
+  a <- a + 1
+}
+
+```
+
+# Packages
+
+## Chargement d'un package déjà installé
+
+- CRAN: 11203 packages (août 2017) avec croissance exponentielle
+- Bioconductor: 1381 "software" packages (août 2017)
+
+```{r}
+# chargement d'un package déjà installé
+library(survival)
+# rend disponible des fonctions spécifiques aux modèles de survie, par exemple:
+?coxph
+
+```
+
+## Installation d'un package disponible sur le CRAN
+
+```{r eval=FALSE}
+# Installation d'un package disponible sur le CRAN
+install.packages("packHV")
+library(packHV)
+?desc
+
+```
+
+## installation d'un package disponible sur BioConductor
+
+**Note: ** la première installation d'un package BioConductor peut prendre du temps car il faut installer une série de packages de base. 
+
+```{r  eval=FALSE}
+# installation d'un package disponible sur Bioconductor
+source("https://bioconductor.org/biocLite.R")
+biocLite("rfPred")
+# répondre "n" si R propose d'updater des packages
+library(rfPred)
+?rfPred_scores
+
+```
+
+# Modélisation statistique
+
+## Modèle linéaire simple
+
+```{r}
+# modèle linéaire simple
+fit <- lm(formula=poids ~ taille, data=d)
+fit
+summary(fit)
+
+```
+
+## Interprétation graphique
+
+```{r}
+# interprétation graphique
+plot(formula=poids ~ taille, data=d, pch=16, col="red",
+     main="Poids vs taille de 4 individus", xlab="Taille (cm)", ylab="Poids (kg)")
+abline(a=-75.7931, b=0.8276, lty=2, lwd=3, col="grey")
+
+```
+
+# Et plein d'autres choses
+
+- analyses exploratoires: ACP, clustering, etc
+- tests statistiques
+- génération automatique de rapports d'analyses en PDF/HTML via rmarkdown: mélange de texte, code et résultats
+- applications web via R-Shiny (e.g. [checkmyindex.pasteur.fr](https://checkmyindex.pasteur.fr/) ou [shaman.c3bi.pasteur.fr](http://shaman.c3bi.pasteur.fr/))
+
+
+
