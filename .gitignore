@@ -4,3 +4,4 @@ articles
 .#index.html
 *~
 practicals/00_RStudio_environment/RStudio_environment.R
+.DS_Store
