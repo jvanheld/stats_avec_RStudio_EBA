@@ -1,0 +1,461 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <meta name="author" content="Jacques van Helden" />
+  <meta name="date" content="2018-11-27" />
+  <title>Exploration d'une table d'annotations génomiques (GTF)</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; background-color: #f8f8f8; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+pre, code { background-color: #f8f8f8; }
+code > span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+code > span.dt { color: #204a87; } /* DataType */
+code > span.dv { color: #0000cf; } /* DecVal */
+code > span.bn { color: #0000cf; } /* BaseN */
+code > span.fl { color: #0000cf; } /* Float */
+code > span.ch { color: #4e9a06; } /* Char */
+code > span.st { color: #4e9a06; } /* String */
+code > span.co { color: #8f5902; font-style: italic; } /* Comment */
+code > span.ot { color: #8f5902; } /* Other */
+code > span.al { color: #ef2929; } /* Alert */
+code > span.fu { color: #000000; } /* Function */
+code > span.er { color: #a40000; font-weight: bold; } /* Error */
+code > span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #000000; } /* Constant */
+code > span.sc { color: #000000; } /* SpecialChar */
+code > span.vs { color: #4e9a06; } /* VerbatimString */
+code > span.ss { color: #4e9a06; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #000000; } /* Variable */
+code > span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+code > span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+code > span.ex { } /* Extension */
+code > span.at { color: #c4a000; } /* Attribute */
+code > span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+code > span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <script src="gtf_exploration_files/jquery-1.11.3/jquery.min.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="gtf_exploration_files/bootstrap-3.3.5/css/cerulean.min.css" rel="stylesheet" />
+  <script src="gtf_exploration_files/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+  <script src="gtf_exploration_files/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+  <script src="gtf_exploration_files/bootstrap-3.3.5/shim/respond.min.js"></script>
+  <link href="gtf_exploration_files/slidy-2/styles/slidy.css" rel="stylesheet" />
+  <script src="gtf_exploration_files/slidy-2/scripts/slidy.js"></script>
+</head>
+<body>
+<div class="slide titlepage">
+  <h1 class="title">Exploration d'une table d'annotations génomiques (GTF)</h1>
+  <h1 class="subtitle">Ecole de Bioinformatique Aviesan-IFB 2018</h1>
+  <p class="author">
+Jacques van Helden
+  </p>
+  <p class="date">2018-11-27</p>
+</div>
+<div id="but-de-ce-tp" class="slide section level2">
+<h2>But de ce TP</h2>
+<p>Durant ce TP, vous serez amenés à effectuer les tâches suivantes:</p>
+<ol style="list-style-type: decimal">
+<li>Manipuler une table de données génomique (les annotations du génome de la levure).</li>
+<li>Sélectionner un sous-ensemble des données en filtrant les lignes sur base d'un critère déterminé (type d'annotation, chromosome).</li>
+<li>Générer des graphiques pour représenter différents aspects liés à ces données.</li>
+<li>Calculer des statistiques qui résument les différents types d'annotations.</li>
+</ol>
+</div>
+<div id="le-format-gtf" class="slide section level2">
+<h2>Le format GTF</h2>
+<p>Le format <strong>GTF</strong> (<strong>General Transfer Format</strong>) est très largement utilisé pour fournir des annotations génomiques dans un format facilement lisible, tout en étant facilement manipulable au moyen de l'ordinateur.</p>
+<p>Fichiers textuels,</p>
+<ul>
+<li>une ligne par &quot;objet&quot; génomique (gène, transcrit, exon, intron, CDS, ...)</li>
+<li>une colonne par attribut (nom, source, type d'objet, coordonnées génomique, description).</li>
+</ul>
+<p>Le format est décrit sur les sites suivants.</p>
+<ul>
+<li><a href="http://www.ensembl.org/info/website/upload/gff.html" class="uri">http://www.ensembl.org/info/website/upload/gff.html</a></li>
+<li><a href="https://genome.ucsc.edu/FAQ/FAQformat.html#format4" class="uri">https://genome.ucsc.edu/FAQ/FAQformat.html#format4</a></li>
+</ul>
+</div>
+<div id="localiser-lurl-dun-fichier-gtf" class="slide section level2">
+<h2>Localiser l'URL d'un fichier GTF</h2>
+<p>N'hésitez pas à adapter le protocole ci-dessous pour travailler avec votre propre génome.</p>
+<ol style="list-style-type: decimal">
+<li>Connectez-vous à <a href="http://ensemblgenomes.org/" class="uri">http://ensemblgenomes.org/</a>.</li>
+<li>Cliquez sur le lien <a href="http://fungi.ensemblgenomes.org/">Fungi</a>.</li>
+<li>Cliquez <a href="http://fungi.ensembl.org/info/website/ftp/">Download</a></li>
+<li>Dans la boîte <strong>Filter</strong>, tapez <em>Saccharomyces cerevisiae</em>. Pendant que vous écrivez, la liste des organismes proposés s'affine.</li>
+<li>Copiez le lien du fichier gtf (<a href="ftp://ftp.ensemblgenomes.org/pub/release-41/fungi/gtf/saccharomyces_cerevisiae/Saccharomyces_cerevisiae.R64-1-1.41.gtf.gz">Saccharomyces_cerevisiae.R64-1-1.41.gtf.gz</a>).</li>
+</ol>
+</div>
+<div id="page-daccueil-densemblgenomes" class="slide section level2">
+<h2>Page d'accueil d'EnsemblGenomes</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">include_graphics</span>(<span class="dt">path =</span> <span class="st">&quot;images/ensemblgenomes_home.png&quot;</span>)</code></pre></div>
+<p><img src="images/ensemblgenomes_home.png" width="80%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="ensemblgenomes-fungi" class="slide section level2">
+<h2>EnsemblGenomes Fungi</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">include_graphics</span>(<span class="dt">path =</span> <span class="st">&quot;images/ensemblgenomes_fungi.png&quot;</span>)</code></pre></div>
+<p><img src="images/ensemblgenomes_fungi.png" width="80%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="ensemblgenomes-download-page" class="slide section level2">
+<h2>EnsemblGenomes Download page</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">include_graphics</span>(<span class="dt">path =</span> <span class="st">&quot;images/ensemblgenomes_download_yeast.png&quot;</span>)</code></pre></div>
+<p><img src="images/ensemblgenomes_download_yeast.png" width="80%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="le-chemin-de-la-maison-automatique" class="slide section level2">
+<h2>Le chemin de la maison (automatique)</h2>
+<p>Sous Linux et Mac OS X, on peut identifier la racine de son compte avec la commande <strong>R</strong> <code>Sys.getenv()</code>.</p>
+<ul>
+<li><p>Invoquée sans paramètre, cette commande liste toutes les variables d'environnement (votre configuration système).</p></li>
+<li><p>On peut restreindre l'output à une variable d'environnement donnée, par exemple <code>Sys.getenv(&quot;HOME&quot;)</code> retourne le chemin de la racine de votre compte.</p></li>
+<li><p>Une écriture équivalente : le symbole tilde <code>~</code> indique également le chemin de la rachine de votre compte.</p></li>
+<li><p>La notation '~' fonctionne également sous Windows, nous l'utiliserons donc ci-dessous.</p></li>
+</ul>
+</div>
+<div id="creer-un-espace-de-travail" class="slide section level2">
+<h2>Créer un espace de travail</h2>
+<p><strong>Exercice:</strong> créer un dossier de travail nommé <code>workDir</code> à la racine de votre compte, et déplacez-vous dans ce dossier.</p>
+<p>Solution ci-dessous.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## Define the working directory
+workDir &lt;-<span class="st"> &quot;~/intro_R/explorer_un_GTF&quot;</span>
+
+## Create the working directory 
+<span class="kw">dir.create</span>(workDir, <span class="dt">recursive =</span> <span class="ot">TRUE</span>, <span class="dt">showWarnings =</span> <span class="ot">FALSE</span>)
+
+## Go to the working directory
+<span class="kw">setwd</span>(workDir)
+<span class="kw">getwd</span>()      ## Check your current location</code></pre></div>
+<pre><code>[1] &quot;/Users/jvanheld/intro_R/explorer_un_GTF&quot;</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">list.files</span>()  ## List files (should be empty if just created)</code></pre></div>
+<pre><code>[1] &quot;chrom_sizes.tsv&quot;                           
+[2] &quot;Saccharomyces_cerevisiae.R64-1-1.41.gtf.gz&quot;</code></pre>
+</div>
+<div id="downloading-the-gtf-file" class="slide section level2">
+<h2>Downloading the GTF file</h2>
+<p><strong>Exercise:</strong> download the GTF file in the working directory (optionally, adapt the command to load a GTF of your interest). Before downloading the file we check if it is already present in the rowking directory. If yes, we skip the download.</p>
+<p>**<a href="Tip:**" class="uri">Tip:**</a> use the commands <code>file.exists</code>, <code>download.file</code>.</p>
+</div>
+<div id="downloading-the-gtf-file-solution" class="slide section level2">
+<h2>Downloading the GTF file: solution</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## Define the file name (without path) in a separate variable, we will need it later
+gtf.file &lt;-<span class="st"> &#39;Saccharomyces_cerevisiae.R64-1-1.41.gtf.gz&#39;</span>
+
+## Define the URL by concatenating the URL of the directory and the file name
+gtf.url &lt;-<span class="st"> </span><span class="kw">file.path</span>(<span class="st">&#39;ftp://ftp.ensemblgenomes.org/pub/release-41/fungi/gtf/saccharomyces_cerevisiae/&#39;</span>, gtf.file)
+
+## Download the file, but only if not yet there
+<span class="cf">if</span> (<span class="kw">file.exists</span>(gtf.file)) {
+  <span class="kw">message</span>(<span class="st">&quot;GTF annotation file already there: &quot;</span>, gtf.file)
+} <span class="cf">else</span> {
+  <span class="kw">message</span>(<span class="st">&quot;Downloading GTF annotation file&quot;</span>)
+  <span class="kw">download.file</span>(<span class="dt">url =</span> gtf.url, <span class="dt">destfile =</span> gtf.file)
+}
+
+## Check the files in the work directory
+<span class="kw">list.files</span>()</code></pre></div>
+<pre><code>[1] &quot;data&quot;                                      
+[2] &quot;figures&quot;                                   
+[3] &quot;gtf_exploration.html&quot;                      
+[4] &quot;gtf_exploration.md&quot;                        
+[5] &quot;gtf_exploration.pdf&quot;                       
+[6] &quot;gtf_exploration.Rmd&quot;                       
+[7] &quot;images&quot;                                    
+[8] &quot;Saccharomyces_cerevisiae.R64-1-1.41.gtf.gz&quot;</code></pre>
+</div>
+<div id="loading-a-data-table-in-r" class="slide section level2">
+<h2>Loading a data table in R</h2>
+<p>Commands: <code>read.table</code>, <code>read.delim</code>, <code>read.cvs</code>.</p>
+<p>R includes several types of tabular structures (matrix, data.frame, table). The most widely used is <code>data.frame()</code>, which consists in a table of values with a type (strings, integer, ..) attached to each column, and names associated to rows and columns.</p>
+<p>The function <code>read.table()</code> enables to read a text file containing tabular data, and to store its content in a variable.</p>
+<p>Several finctions derived from <code>read.table()</code> facilitate the loading of different formats.</p>
+<ul>
+<li><p><code>read.delim()</code> for files where a particular charcater is used as column separator (by default the tab character &quot;&quot;).</p></li>
+<li><p><code>read.csv()</code> for &quot;comma-searated values&quot; values.</p></li>
+</ul>
+</div>
+<div id="loading-the-gtf-file" class="slide section level2">
+<h2>Loading the GTF file</h2>
+<p>Load the GTF file in a variable named <code>featureTable</code>.</p>
+<p>**<a href="Tip:**" class="uri">Tip:**</a> command <code>read.delim</code>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## Load GTF file in a data.frame
+featureTable &lt;-<span class="st"> </span><span class="kw">read.delim</span>(
+  gtf.file, <span class="dt">comment.char =</span> <span class="st">&quot;#&quot;</span>, <span class="dt">sep=</span><span class="st">&quot;</span><span class="ch">\t</span><span class="st">&quot;</span>, 
+  <span class="dt">header=</span><span class="ot">FALSE</span>, <span class="dt">row.names =</span> <span class="ot">NULL</span>)
+
+## The GTF format has no header, but we can define it based on the specification
+<span class="kw">names</span>(featureTable) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;seqname&quot;</span>, <span class="st">&quot;source&quot;</span>, <span class="st">&quot;feature&quot;</span>, <span class="st">&quot;start&quot;</span>, <span class="st">&quot;end&quot;</span>, <span class="st">&quot;score&quot;</span>, <span class="st">&quot;strand&quot;</span>, <span class="st">&quot;frame&quot;</span>, <span class="st">&quot;attribute&quot;</span>)</code></pre></div>
+</div>
+<div id="exploring-the-content-of-a-data-table" class="slide section level2">
+<h2>Exploring the content of a data table</h2>
+<p>Immediately after having loaded a data table, check its dimensions.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">dim</span>(featureTable) ## Dimensions of the tbale</code></pre></div>
+<pre><code>[1] 41606     9</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">nrow</span>(featureTable) ## Number of rows</code></pre></div>
+<pre><code>[1] 41606</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">ncol</span>(featureTable) ## Number of columns</code></pre></div>
+<pre><code>[1] 9</code></pre>
+</div>
+<div id="checking-heads-and-tails" class="slide section level2">
+<h2>Checking heads and tails</h2>
+<p>Displaying the full annotation table would not be very convenient, since it contains tens of thousands of rows.</p>
+<p>We can display the first rows of the file with the function <code>head()</code>, and the last rows with <code>tail()</code>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## Display the 5 first rows of the feature table
+<span class="kw">head</span>(featureTable, <span class="dt">n =</span> <span class="dv">5</span>) 
+
+## Display the 5 last rows of the feature table
+<span class="kw">tail</span>(featureTable, <span class="dt">n =</span> <span class="dv">5</span>) </code></pre></div>
+</div>
+<div id="viewing-a-table" class="slide section level2">
+<h2>Viewing a table</h2>
+<p>If you are using the <strong>RStudio</strong> environment, you can display the table in a dynamic viewer pane with the function <code>View()</code>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## In RStudio, display the table in a separate tab
+<span class="kw">View</span>(featureTable) </code></pre></div>
+<p>The <code>View()</code> function is interactive, so it should not be used in a script because it would perturbate its execution.</p>
+</div>
+<div id="selecting-columns" class="slide section level2">
+<h2>Selecting columns</h2>
+<p>The last column of GTF files is particularly heavy, it contains a lof of semi-structured information.</p>
+<p>We can select the 8 first columns and display the 5 first rows of this sub-table.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## Column selection + head
+<span class="kw">head</span>(featureTable[,<span class="dv">1</span><span class="op">:</span><span class="dv">8</span>], <span class="dt">n=</span><span class="dv">5</span>)</code></pre></div>
+<pre><code>  seqname source     feature start  end score strand frame
+1      IV    sgd        gene  1802 2953     .      +     .
+2      IV    sgd  transcript  1802 2953     .      +     .
+3      IV    sgd        exon  1802 2953     .      +     .
+4      IV    sgd         CDS  1802 2950     .      +     0
+5      IV    sgd start_codon  1802 1804     .      +     0</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## Equivalent: selecting subsets of rows and columns
+featureTable[<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>, <span class="dv">1</span><span class="op">:</span><span class="dv">8</span>]</code></pre></div>
+<pre><code>  seqname source     feature start  end score strand frame
+1      IV    sgd        gene  1802 2953     .      +     .
+2      IV    sgd  transcript  1802 2953     .      +     .
+3      IV    sgd        exon  1802 2953     .      +     .
+4      IV    sgd         CDS  1802 2950     .      +     0
+5      IV    sgd start_codon  1802 1804     .      +     0</code></pre>
+</div>
+<div id="feature-types" class="slide section level2">
+<h2>Feature types</h2>
+<p><strong>Exercise:</strong> the column <em>feature</em> of the GTF indicates the feature table.</p>
+<ul>
+<li>List the feature types found in the GTF</li>
+<li>Count the number of features per type, and sort them by decreasing values.</li>
+</ul>
+<p><strong>Tip: </strong> commands <code>unique</code>, <code>table</code> and <code>sort</code>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## List the types of features
+<span class="kw">unique</span>(featureTable<span class="op">$</span>feature)</code></pre></div>
+<pre><code>[1] gene           transcript     exon           CDS           
+[5] start_codon    stop_codon     five_prime_utr
+7 Levels: CDS exon five_prime_utr gene start_codon ... transcript</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## Count the number of features per type
+<span class="kw">sort</span>(<span class="kw">table</span>(featureTable<span class="op">$</span>feature), <span class="dt">decreasing =</span> <span class="ot">TRUE</span>)</code></pre></div>
+<pre><code>
+          exon           gene     transcript            CDS    start_codon 
+          7416           7036           7036           6913           6601 
+    stop_codon five_prime_utr 
+          6600              4 </code></pre>
+</div>
+<div id="decompte-par-valeur" class="slide section level2">
+<h2>Décompte par valeur</h2>
+<p>La fonction <code>table()</code> permet de compter le nombre d'occurrences de chaque valeur dans un vecteur ou un tableau. Quelques exemples d'utilisation ci-dessous.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## Count the number of featues per chromosome
+<span class="kw">table</span>(featureTable<span class="op">$</span>seqname)</code></pre></div>
+<pre><code>
+   I   II  III   IV   IX Mito    V   VI  VII VIII    X   XI  XII XIII  XIV 
+ 731 2841 1170 5185 1520  312 2055  898 3688 2012 2511 2180 3690 3196 2712 
+  XV  XVI 
+3706 3199 </code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## Count the number of features per type
+<span class="kw">table</span>(featureTable<span class="op">$</span>feature)</code></pre></div>
+<pre><code>
+           CDS           exon five_prime_utr           gene    start_codon 
+          6913           7416              4           7036           6601 
+    stop_codon     transcript 
+          6600           7036 </code></pre>
+<p>On peut calculer des tables de contingence en comptant le nombre de combinaisons entre 2 vecteurs (ou 2 colonnes d'un tableau).</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">##  Table with two vectors
+<span class="kw">table</span>(featureTable<span class="op">$</span>feature, featureTable<span class="op">$</span>seqname)</code></pre></div>
+<pre><code>                
+                   I  II III  IV  IX Mito   V  VI VII VIII   X  XI XII
+  CDS            120 483 192 870 252   59 338 146 605  340 412 361 604
+  exon           129 500 210 907 269   87 367 166 659  358 446 385 668
+  five_prime_utr   0   0   0   0   1    0   0   0   0    0   1   0   0
+  gene           124 472 200 868 258   55 352 154 629  336 428 369 631
+  start_codon    117 458 184 836 241   28 323 139 583  321 398 348 578
+  stop_codon     117 456 184 836 241   28 323 139 583  321 398 348 578
+  transcript     124 472 200 868 258   55 352 154 629  336 428 369 631
+                
+                 XIII XIV  XV XVI
+  CDS             531 454 609 537
+  exon            573 478 647 567
+  five_prime_utr    1   0   1   0
+  gene            541 455 628 536
+  start_codon     504 435 596 512
+  stop_codon      505 435 597 511
+  transcript      541 455 628 536</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## Same result with a 2-column data frame
+<span class="kw">table</span>(featureTable[, <span class="kw">c</span>(<span class="st">&quot;feature&quot;</span>, <span class="st">&quot;seqname&quot;</span>)])</code></pre></div>
+<pre><code>                seqname
+feature            I  II III  IV  IX Mito   V  VI VII VIII   X  XI XII
+  CDS            120 483 192 870 252   59 338 146 605  340 412 361 604
+  exon           129 500 210 907 269   87 367 166 659  358 446 385 668
+  five_prime_utr   0   0   0   0   1    0   0   0   0    0   1   0   0
+  gene           124 472 200 868 258   55 352 154 629  336 428 369 631
+  start_codon    117 458 184 836 241   28 323 139 583  321 398 348 578
+  stop_codon     117 456 184 836 241   28 323 139 583  321 398 348 578
+  transcript     124 472 200 868 258   55 352 154 629  336 428 369 631
+                seqname
+feature          XIII XIV  XV XVI
+  CDS             531 454 609 537
+  exon            573 478 647 567
+  five_prime_utr    1   0   1   0
+  gene            541 455 628 536
+  start_codon     504 435 596 512
+  stop_codon      505 435 597 511
+  transcript      541 455 628 536</code></pre>
+</div>
+<div id="computing-feature-lengths" class="slide section level2">
+<h2>Computing feature lengths</h2>
+<ul>
+<li>Add a column with feature lengths.</li>
+</ul>
+<p><strong>Note about feature length computation (explain why) :</strong></p>
+<p><span class="math display">\[L = \text{end} - \text{start} + 1\]</span></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## Add a column to the table with genes lengths
+featureTable<span class="op">$</span>length &lt;-<span class="st"> </span>featureTable<span class="op">$</span>end <span class="op">-</span><span class="st"> </span>featureTable<span class="op">$</span>start <span class="op">+</span><span class="st"> </span><span class="dv">1</span></code></pre></div>
+</div>
+<div id="filtering-rows-based-on-a-column-content" class="slide section level2">
+<h2>Filtering rows based on a column content</h2>
+<p>The function <code>subset()</code> enables to select a subset of rows based on a filter applied to the content of one or several columns.</p>
+<p>We can use it to select the subset of features corresponding to genes.</p>
+</div>
+<div id="selecting-genes-from-the-gtf-table" class="slide section level2">
+<h2>Selecting genes from the GTF table</h2>
+<ul>
+<li>Select of genes from the GTF table and store them in a separate variable named <code>genes</code>.</li>
+<li>Compute summary statistics about gene lengthhs</li>
+</ul>
+<p><strong>Tip: </strong> commands <code>subset</code>, <code>summary</code>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## Select subset of features having &quot;CDS&quot; as &quot;feature&quot; attribute
+genes &lt;-<span class="st"> </span><span class="kw">subset</span>(featureTable, feature <span class="op">==</span><span class="st"> &quot;gene&quot;</span>)
+
+## Print a message with the number of genes
+<span class="kw">message</span>(<span class="st">&quot;Number of genes: &quot;</span>, <span class="kw">nrow</span>(genes))
+
+## Compute basic statistics on genes lengths
+<span class="kw">summary</span>(genes<span class="op">$</span>length)</code></pre></div>
+<pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+     51     468    1005    1275    1717   14733 </code></pre>
+</div>
+<div id="downloading-chromosome-sizes" class="slide section level2">
+<h2>Downloading chromosome sizes</h2>
+<ul>
+<li>Download chromosome sizes (<a href="https://github.com/jvanheld/stats_avec_RStudio_EBA/blob/gh-pages/practicals/gtf_exploration/data/chrom_sizes.tsv">chrom_sizes.tsv</a>)</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## Download tab-delimited file with chromosome sizes (unless already there)
+chromsizes.url &lt;-<span class="st"> &quot;https://github.com/jvanheld/stats_avec_RStudio_EBA/blob/gh-pages/practicals/gtf_exploration/data/chrom_sizes.tsv&quot;</span>
+chrom.size.file &lt;-<span class="st"> </span><span class="kw">file.path</span>(workDir, <span class="st">&quot;chrom_sizes.tsv&quot;</span>)
+
+<span class="cf">if</span> (<span class="kw">file.exists</span>(chrom.size.file)) {
+} <span class="cf">else</span> {
+    <span class="kw">download.file</span>(chromsizes.url, <span class="dt">destfile =</span> chrom.size.file)
+}</code></pre></div>
+<pre><code>NULL</code></pre>
+</div>
+<div id="loading-chromosome-sizes" class="slide section level2">
+<h2>Loading chromosome sizes</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## Read chromosome sizes
+chrom.size &lt;-<span class="st"> </span><span class="kw">read.delim</span>(
+  <span class="dt">file =</span> chrom.size.file,
+  <span class="dt">header =</span> <span class="ot">FALSE</span>, <span class="dt">row.names =</span> <span class="dv">1</span>)
+
+## Assign a name to the columns
+<span class="kw">names</span>(chrom.size) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;chromID&quot;</span>, <span class="st">&quot;size&quot;</span>)
+<span class="co"># View(chrom.size)</span>
+
+## print the size of hte third chromosome
+<span class="kw">message</span>(<span class="st">&quot;Length of chromosome III = &quot;</span>, chrom.size[<span class="st">&quot;III&quot;</span>, <span class="st">&quot;size&quot;</span>], <span class="st">&quot; bp.&quot;</span>)</code></pre></div>
+</div>
+<div id="exercices" class="slide section level2">
+<h2>Exercices</h2>
+<ol style="list-style-type: decimal">
+<li><p>Draw an histogram with gene length distribution. Choose a relevan number of breaks to display an informative histogram.</p></li>
+<li><p>Draw a barplot showing gene density per chromosome (number of genes per Mb).</p></li>
+<li><p>Draw a boxplot of gene lengths per chromosome.</p></li>
+</ol>
+</div>
+<div id="gene-length-histogram" class="slide section level2">
+<h2>Gene length histogram</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">hist</span>(genes<span class="op">$</span>length)</code></pre></div>
+<p><img src="figures/hist_default-1.png" width="70%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="setting-a-relevant-number-of-breaks" class="slide section level2">
+<h2>Setting a relevant number of breaks</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## Take more or less 100 bins
+h &lt;-<span class="st"> </span><span class="kw">hist</span>(genes<span class="op">$</span>length, <span class="dt">breaks =</span> <span class="dv">100</span>)</code></pre></div>
+<p><img src="figures/hist_100breaks-1.png" width="70%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="gene-length-distribution----improving-the-output" class="slide section level2">
+<h2>Gene length distribution -- improving the output</h2>
+<div class="figure" style="text-align: center">
+<img src="figures/gene_length_histogram-1.png" alt="Distribution of cds lengths for Saccharomyces cerevisiae. " width="90%" />
+<p class="caption">
+Distribution of cds lengths for Saccharomyces cerevisiae.
+</p>
+</div>
+</div>
+<div id="getting-the-hist-data" class="slide section level2">
+<h2>Getting the hist() data</h2>
+<p>Récupérez le résultat de <code>hist()</code> dans une variable nommée <code>{histData}</code>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## Define breaks exactly in the way you wish
+histData &lt;-<span class="st"> </span><span class="kw">hist</span>(genes<span class="op">$</span>length, <span class="dt">breaks=</span><span class="kw">seq</span>(<span class="dt">from=</span><span class="dv">0</span>, <span class="dt">to=</span><span class="kw">max</span>(genes<span class="op">$</span>length)<span class="op">+</span><span class="dv">100</span>, <span class="dt">by=</span><span class="dv">100</span>))</code></pre></div>
+<p><img src="figures/hist_data-1.png" style="display: block; margin: auto;" /></p>
+<p>Imprimez le résultat à l'écran (<code>print()</code>) et analysez la structure de la variable <code>histData</code> (il s'agit d'une variable de type liste).</p>
+<p>Fonctions utiles:</p>
+<ul>
+<li><code>class(histData)</code></li>
+<li><code>attributes(histData)</code></li>
+<li><code>print(histData)</code></li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## Display the values used to draw the histogram
+<span class="kw">print</span>(histData )</code></pre></div>
+</div>
+<div id="gene-length-box-plot" class="slide section level2">
+<h2>Gene length box plot</h2>
+<p>D'autres types de graphiques permettent d'explorer la distribution d'un ensemble des données. En particulier, les boîtes à moustaches (box plots) affichent, pour une série de données, la médiane, l'écart interquartile, un intervalle de confiance et les valeurs aberrantes.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">boxplot</span>(length <span class="op">~</span><span class="st"> </span>seqname, <span class="dt">data =</span> genes, <span class="dt">col=</span><span class="st">&quot;palegreen&quot;</span>, <span class="dt">horizontal=</span><span class="ot">TRUE</span>, <span class="dt">las=</span><span class="dv">1</span>, <span class="dt">xlab=</span><span class="st">&quot;Gene length&quot;</span>, <span class="dt">ylab=</span><span class="st">&quot;Chromosome&quot;</span>)</code></pre></div>
+<div class="figure" style="text-align: center">
+<img src="figures/gnee_length_boxplot-1.png" alt="Boxplot of gene lengths per chromosome" width="70%" />
+<p class="caption">
+Boxplot of gene lengths per chromosome
+</p>
+</div>
+<!--
+## Rendu
+-->
+</div>
+
+  <!-- dynamically load mathjax for compatibility with self-contained -->
+  <script>
+    (function () {
+      var script = document.createElement("script");
+      script.type = "text/javascript";
+      script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+      document.getElementsByTagName("head")[0].appendChild(script);
+    })();
+  </script>
+
+</body>
+</html>
