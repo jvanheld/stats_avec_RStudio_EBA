@@ -3,20 +3,14 @@ title: "Introduction à R"
 author: "Hugo Varet et Jacques van Helden"
 date: '`r Sys.Date()`'
 output:
-  slidy_presentation:
-    smart: no
-    slide_level: 2
-    self_contained: yes
+  html_document:
+    self_contained: no
     fig_caption: yes
-    fig_height: 6
-    fig_width: 7
-    highlight: tango
-    incremental: no
-    keep_md: yes
-    smaller: yes
+    highlight: zenburn
     theme: cerulean
     toc: yes
-    widescreen: yes
+    toc_depth: 3
+    toc_float: yes
   beamer_presentation:
     colortheme: dolphin
     fig_caption: yes
@@ -34,14 +28,6 @@ output:
     highlight: zenburn
     toc: yes
     toc_depth: 3
-  html_document:
-    self_contained: no
-    fig_caption: yes
-    highlight: zenburn
-    theme: cerulean
-    toc: yes
-    toc_depth: 3
-    toc_float: yes
   ioslides_presentation:
     slide_level: 2
     self_contained: no
@@ -52,6 +38,20 @@ output:
     fonttheme: structurebold
     highlight: tango
     smaller: yes
+    toc: yes
+    widescreen: yes
+  slidy_presentation:
+    smart: no
+    slide_level: 2
+    self_contained: yes
+    fig_caption: yes
+    fig_height: 6
+    fig_width: 7
+    highlight: tango
+    incremental: no
+    keep_md: yes
+    smaller: yes
+    theme: cerulean
     toc: yes
     widescreen: yes
 font-import: http://fonts.googleapis.com/css?family=Risque
@@ -284,6 +284,8 @@ plot(x = log(exprs$WT1),   ## données pour l’abscisse
      pch = 16,      ## caractère pour marquer les points
      las = 1,       ## écrire les échelles horizontalement
      col = "red")   ## couleur des points
+grid()  ## Ajout d’une grille
+abline(a = 0, b = 1)   ## Ajouter la droite X = Y (intercept a = 0, pente b = 1).
 ```
 
 ## Sélection de lignes d'un tableau
