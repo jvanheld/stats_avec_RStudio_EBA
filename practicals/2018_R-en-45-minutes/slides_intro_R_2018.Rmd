@@ -1,16 +1,22 @@
 ---
 title: "Introduction à R"
-author: "Hugo Varet et Jacques van Helden"
+author: "Hugo Varet, Olivier Kirsh et Jacques van Helden"
 date: '`r Sys.Date()`'
 output:
-  html_document:
-    self_contained: no
+  slidy_presentation:
+    smart: no
+    slide_level: 2
+    self_contained: yes
     fig_caption: yes
-    highlight: zenburn
+    fig_height: 6
+    fig_width: 7
+    highlight: tango
+    incremental: no
+    keep_md: yes
+    smaller: yes
     theme: cerulean
     toc: yes
-    toc_depth: 3
-    toc_float: yes
+    widescreen: yes
   beamer_presentation:
     colortheme: dolphin
     fig_caption: yes
@@ -28,6 +34,14 @@ output:
     highlight: zenburn
     toc: yes
     toc_depth: 3
+  html_document:
+    self_contained: no
+    fig_caption: yes
+    highlight: zenburn
+    theme: cerulean
+    toc: yes
+    toc_depth: 3
+    toc_float: yes
   ioslides_presentation:
     slide_level: 2
     self_contained: no
@@ -40,22 +54,8 @@ output:
     smaller: yes
     toc: yes
     widescreen: yes
-  slidy_presentation:
-    smart: no
-    slide_level: 2
-    self_contained: yes
-    fig_caption: yes
-    fig_height: 6
-    fig_width: 7
-    highlight: tango
-    incremental: no
-    keep_md: yes
-    smaller: yes
-    theme: cerulean
-    toc: yes
-    widescreen: yes
 font-import: http://fonts.googleapis.com/css?family=Risque
-subtitle: Probabilités et statistique pour la biologie (STAT1)
+subtitle: Ecole de Bioinformatique Aviesan-IFB 2018
 font-family: Garamond
 transition: linear
 ---
