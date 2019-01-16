@@ -165,8 +165,8 @@ list.files()  ## List files (should be empty if just created)
 ```
 
 ```
-[1] "chrom_sizes.tsv"                           
-[2] "Saccharomyces_cerevisiae.R64-1-1.41.gtf.gz"
+[1] "Saccharomyces_cerevisiae.R64-1-1.41_chrom_sizes.tsv"
+[2] "Saccharomyces_cerevisiae.R64-1-1.41.gtf.gz"         
 ```
 
 ## Downloading the GTF file
@@ -300,16 +300,16 @@ View(featureTable)
 
 The `View()` function is interactive, so it should not be used in a script because it would perturbate its execution. 
 
-## Selecting columns
+## Selecting the top columns
 
-The last column of GTF files is particularly heavy, it contains a lof of semi-structured information. 
+The last column of GTF files is particularly heavy, it contains a lot of semi-structured information. 
 
 We can select the 8 first columns and display the 5 first rows of this sub-table.
 
 
 ```r
 ## Column selection + head
-head(featureTable[,1:8], n=5)
+head(featureTable[,1:8], n = 5)
 ```
 
 ```
@@ -343,7 +343,7 @@ featureTable[1:5, 1:8]
 - List the feature types found in the GTF
 - Count the number of features per type, and sort them by decreasing values. 
 
-**Tip: ** commands `unique`, `table` and `sort`.
+**Tip: ** commands `unique()`, `table()` and `sort()`.
 
 
 
@@ -410,54 +410,56 @@ On peut calculer des tables de contingence en comptant le nombre de combinaisons
 
 ```r
 ##  Table with two vectors
-table(featureTable$feature, featureTable$seqname)
+table(featureTable$seqname, featureTable$feature)
 ```
 
 ```
-                
-                   I  II III  IV  IX Mito   V  VI VII VIII   X  XI XII
-  CDS            120 483 192 870 252   59 338 146 605  340 412 361 604
-  exon           129 500 210 907 269   87 367 166 659  358 446 385 668
-  five_prime_utr   0   0   0   0   1    0   0   0   0    0   1   0   0
-  gene           124 472 200 868 258   55 352 154 629  336 428 369 631
-  start_codon    117 458 184 836 241   28 323 139 583  321 398 348 578
-  stop_codon     117 456 184 836 241   28 323 139 583  321 398 348 578
-  transcript     124 472 200 868 258   55 352 154 629  336 428 369 631
-                
-                 XIII XIV  XV XVI
-  CDS             531 454 609 537
-  exon            573 478 647 567
-  five_prime_utr    1   0   1   0
-  gene            541 455 628 536
-  start_codon     504 435 596 512
-  stop_codon      505 435 597 511
-  transcript      541 455 628 536
+      
+       CDS exon five_prime_utr gene start_codon stop_codon transcript
+  I    120  129              0  124         117        117        124
+  II   483  500              0  472         458        456        472
+  III  192  210              0  200         184        184        200
+  IV   870  907              0  868         836        836        868
+  IX   252  269              1  258         241        241        258
+  Mito  59   87              0   55          28         28         55
+  V    338  367              0  352         323        323        352
+  VI   146  166              0  154         139        139        154
+  VII  605  659              0  629         583        583        629
+  VIII 340  358              0  336         321        321        336
+  X    412  446              1  428         398        398        428
+  XI   361  385              0  369         348        348        369
+  XII  604  668              0  631         578        578        631
+  XIII 531  573              1  541         504        505        541
+  XIV  454  478              0  455         435        435        455
+  XV   609  647              1  628         596        597        628
+  XVI  537  567              0  536         512        511        536
 ```
 
 ```r
 ## Same result with a 2-column data frame
-table(featureTable[, c("feature", "seqname")])
+table(featureTable[, c("seqname", "feature")])
 ```
 
 ```
-                seqname
-feature            I  II III  IV  IX Mito   V  VI VII VIII   X  XI XII
-  CDS            120 483 192 870 252   59 338 146 605  340 412 361 604
-  exon           129 500 210 907 269   87 367 166 659  358 446 385 668
-  five_prime_utr   0   0   0   0   1    0   0   0   0    0   1   0   0
-  gene           124 472 200 868 258   55 352 154 629  336 428 369 631
-  start_codon    117 458 184 836 241   28 323 139 583  321 398 348 578
-  stop_codon     117 456 184 836 241   28 323 139 583  321 398 348 578
-  transcript     124 472 200 868 258   55 352 154 629  336 428 369 631
-                seqname
-feature          XIII XIV  XV XVI
-  CDS             531 454 609 537
-  exon            573 478 647 567
-  five_prime_utr    1   0   1   0
-  gene            541 455 628 536
-  start_codon     504 435 596 512
-  stop_codon      505 435 597 511
-  transcript      541 455 628 536
+       feature
+seqname CDS exon five_prime_utr gene start_codon stop_codon transcript
+   I    120  129              0  124         117        117        124
+   II   483  500              0  472         458        456        472
+   III  192  210              0  200         184        184        200
+   IV   870  907              0  868         836        836        868
+   IX   252  269              1  258         241        241        258
+   Mito  59   87              0   55          28         28         55
+   V    338  367              0  352         323        323        352
+   VI   146  166              0  154         139        139        154
+   VII  605  659              0  629         583        583        629
+   VIII 340  358              0  336         321        321        336
+   X    412  446              1  428         398        398        428
+   XI   361  385              0  369         348        348        369
+   XII  604  668              0  631         578        578        631
+   XIII 531  573              1  541         504        505        541
+   XIV  454  478              0  455         435        435        455
+   XV   609  647              1  628         596        597        628
+   XVI  537  567              0  536         512        511        536
 ```
 
 
@@ -520,17 +522,14 @@ summary(genes$length)
 
 ```r
 ## Download tab-delimited file with chromosome sizes (unless already there)
-chromsizes.url <- "https://github.com/jvanheld/stats_avec_RStudio_EBA/blob/gh-pages/practicals/gtf_exploration/data/chrom_sizes.tsv"
-chrom.size.file <- file.path(workDir, "chrom_sizes.tsv")
+chromsizes.url <- "http://jvanheld.github.io/stats_avec_RStudio_EBA/practicals/gtf_exploration/data/Saccharomyces_cerevisiae.R64-1-1.41_chrom_sizes.tsv"
+chrom.size.file <- file.path(workDir, "Saccharomyces_cerevisiae.R64-1-1.41_chrom_sizes.tsv")
 
 if (file.exists(chrom.size.file)) {
+  message("Chromosome size file already there, not downloaded\n\t", chrom.size.file)
 } else {
-    download.file(chromsizes.url, destfile = chrom.size.file)
+  download.file(chromsizes.url, destfile = chrom.size.file, method = "curl")
 }
-```
-
-```
-NULL
 ```
 
 ## Loading chromosome sizes
@@ -625,11 +624,17 @@ D'autres types de graphiques permettent d'explorer la distribution d'un ensemble
 
 
 ```r
-boxplot(length ~ seqname, data = genes, col="palegreen", horizontal=TRUE, las=1, xlab="Gene length", ylab="Chromosome")
+boxplot(length ~ seqname, 
+        data = genes, 
+        col = "palegreen", 
+        horizontal = TRUE, 
+        las = 1, 
+        xlab = "Gene length", 
+        ylab = "Chromosome")
 ```
 
 <div class="figure" style="text-align: center">
-<img src="figures/gnee_length_boxplot-1.png" alt="Boxplot of gene lengths per chromosome" width="70%" />
+<img src="figures/gene_length_boxplot-1.png" alt="Boxplot of gene lengths per chromosome" width="70%" />
 <p class="caption">Boxplot of gene lengths per chromosome</p>
 </div>
 

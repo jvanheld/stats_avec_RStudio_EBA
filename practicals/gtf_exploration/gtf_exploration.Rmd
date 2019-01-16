@@ -277,15 +277,15 @@ View(featureTable)
 
 The `View()` function is interactive, so it should not be used in a script because it would perturbate its execution. 
 
-## Selecting columns
+## Selecting the top columns
 
-The last column of GTF files is particularly heavy, it contains a lof of semi-structured information. 
+The last column of GTF files is particularly heavy, it contains a lot of semi-structured information. 
 
 We can select the 8 first columns and display the 5 first rows of this sub-table.
 
 ```{r echo=TRUE, eval=TRUE, result=TRUE}
 ## Column selection + head
-head(featureTable[,1:8], n=5)
+head(featureTable[,1:8], n = 5)
 
 ## Equivalent: selecting subsets of rows and columns
 featureTable[1:5, 1:8]
@@ -299,7 +299,7 @@ featureTable[1:5, 1:8]
 - List the feature types found in the GTF
 - Count the number of features per type, and sort them by decreasing values. 
 
-**Tip: ** commands `unique`, `table` and `sort`.
+**Tip: ** commands `unique()`, `table()` and `sort()`.
 
 
 ```{r features_per_type}
@@ -388,14 +388,14 @@ summary(genes$length)
 
 ```{r downlaod_chromosome_sizes}
 ## Download tab-delimited file with chromosome sizes (unless already there)
-chromsizes.url <- "https://github.com/jvanheld/stats_avec_RStudio_EBA/blob/gh-pages/practicals/gtf_exploration/data/Saccharomyces_cerevisiae.R64-1-1.41_chrom_sizes.tsv"
+chromsizes.url <- "http://jvanheld.github.io/stats_avec_RStudio_EBA/practicals/gtf_exploration/data/Saccharomyces_cerevisiae.R64-1-1.41_chrom_sizes.tsv"
 chrom.size.file <- file.path(workDir, "Saccharomyces_cerevisiae.R64-1-1.41_chrom_sizes.tsv")
 
 if (file.exists(chrom.size.file)) {
+  message("Chromosome size file already there, not downloaded\n\t", chrom.size.file)
 } else {
-    download.file(chromsizes.url, destfile = chrom.size.file)
+  download.file(chromsizes.url, destfile = chrom.size.file, method = "curl")
 }
-
 ```
 
 ## Loading chromosome sizes
@@ -491,8 +491,14 @@ print(histData )
 
 D'autres types de graphiques permettent d'explorer la distribution d'un ensemble des données. En particulier, les boîtes à moustaches (box plots) affichent, pour une série de données, la médiane, l'écart interquartile, un intervalle de confiance et les valeurs aberrantes. 
 
-```{r gnee_length_boxplot, fig.width=7, fig.height=5, out.width="70%", fig.cap="Boxplot of gene lengths per chromosome"}
-boxplot(length ~ seqname, data = genes, col="palegreen", horizontal=TRUE, las=1, xlab="Gene length", ylab="Chromosome")
+```{r gene_length_boxplot, fig.width=7, fig.height=5, out.width="70%", fig.cap="Boxplot of gene lengths per chromosome"}
+boxplot(length ~ seqname, 
+        data = genes, 
+        col = "palegreen", 
+        horizontal = TRUE, 
+        las = 1, 
+        xlab = "Gene length", 
+        ylab = "Chromosome")
 
 ```
 

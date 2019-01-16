@@ -145,8 +145,8 @@ workDir &lt;-<span class="st"> &quot;~/intro_R/explorer_un_GTF&quot;</span>
 <span class="kw">getwd</span>()      ## Check your current location</code></pre></div>
 <pre><code>[1] &quot;/Users/jvanheld/intro_R/explorer_un_GTF&quot;</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">list.files</span>()  ## List files (should be empty if just created)</code></pre></div>
-<pre><code>[1] &quot;chrom_sizes.tsv&quot;                           
-[2] &quot;Saccharomyces_cerevisiae.R64-1-1.41.gtf.gz&quot;</code></pre>
+<pre><code>[1] &quot;Saccharomyces_cerevisiae.R64-1-1.41_chrom_sizes.tsv&quot;
+[2] &quot;Saccharomyces_cerevisiae.R64-1-1.41.gtf.gz&quot;         </code></pre>
 </div>
 <div id="downloading-the-gtf-file" class="slide section level2">
 <h2>Downloading the GTF file</h2>
@@ -231,12 +231,12 @@ featureTable &lt;-<span class="st"> </span><span class="kw">read.delim</span>(
 <span class="kw">View</span>(featureTable) </code></pre></div>
 <p>The <code>View()</code> function is interactive, so it should not be used in a script because it would perturbate its execution.</p>
 </div>
-<div id="selecting-columns" class="slide section level2">
-<h2>Selecting columns</h2>
-<p>The last column of GTF files is particularly heavy, it contains a lof of semi-structured information.</p>
+<div id="selecting-the-top-columns" class="slide section level2">
+<h2>Selecting the top columns</h2>
+<p>The last column of GTF files is particularly heavy, it contains a lot of semi-structured information.</p>
 <p>We can select the 8 first columns and display the 5 first rows of this sub-table.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## Column selection + head
-<span class="kw">head</span>(featureTable[,<span class="dv">1</span><span class="op">:</span><span class="dv">8</span>], <span class="dt">n=</span><span class="dv">5</span>)</code></pre></div>
+<span class="kw">head</span>(featureTable[,<span class="dv">1</span><span class="op">:</span><span class="dv">8</span>], <span class="dt">n =</span> <span class="dv">5</span>)</code></pre></div>
 <pre><code>  seqname source     feature start  end score strand frame
 1      IV    sgd        gene  1802 2953     .      +     .
 2      IV    sgd  transcript  1802 2953     .      +     .
@@ -259,7 +259,7 @@ featureTable[<span class="dv">1</span><span class="op">:</span><span class="dv">
 <li>List the feature types found in the GTF</li>
 <li>Count the number of features per type, and sort them by decreasing values.</li>
 </ul>
-<p><strong>Tip: </strong> commands <code>unique</code>, <code>table</code> and <code>sort</code>.</p>
+<p><strong>Tip: </strong> commands <code>unique()</code>, <code>table()</code> and <code>sort()</code>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## List the types of features
 <span class="kw">unique</span>(featureTable<span class="op">$</span>feature)</code></pre></div>
 <pre><code>[1] gene           transcript     exon           CDS           
@@ -292,45 +292,47 @@ featureTable[<span class="dv">1</span><span class="op">:</span><span class="dv">
           6600           7036 </code></pre>
 <p>On peut calculer des tables de contingence en comptant le nombre de combinaisons entre 2 vecteurs (ou 2 colonnes d'un tableau).</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">##  Table with two vectors
-<span class="kw">table</span>(featureTable<span class="op">$</span>feature, featureTable<span class="op">$</span>seqname)</code></pre></div>
-<pre><code>                
-                   I  II III  IV  IX Mito   V  VI VII VIII   X  XI XII
-  CDS            120 483 192 870 252   59 338 146 605  340 412 361 604
-  exon           129 500 210 907 269   87 367 166 659  358 446 385 668
-  five_prime_utr   0   0   0   0   1    0   0   0   0    0   1   0   0
-  gene           124 472 200 868 258   55 352 154 629  336 428 369 631
-  start_codon    117 458 184 836 241   28 323 139 583  321 398 348 578
-  stop_codon     117 456 184 836 241   28 323 139 583  321 398 348 578
-  transcript     124 472 200 868 258   55 352 154 629  336 428 369 631
-                
-                 XIII XIV  XV XVI
-  CDS             531 454 609 537
-  exon            573 478 647 567
-  five_prime_utr    1   0   1   0
-  gene            541 455 628 536
-  start_codon     504 435 596 512
-  stop_codon      505 435 597 511
-  transcript      541 455 628 536</code></pre>
+<span class="kw">table</span>(featureTable<span class="op">$</span>seqname, featureTable<span class="op">$</span>feature)</code></pre></div>
+<pre><code>      
+       CDS exon five_prime_utr gene start_codon stop_codon transcript
+  I    120  129              0  124         117        117        124
+  II   483  500              0  472         458        456        472
+  III  192  210              0  200         184        184        200
+  IV   870  907              0  868         836        836        868
+  IX   252  269              1  258         241        241        258
+  Mito  59   87              0   55          28         28         55
+  V    338  367              0  352         323        323        352
+  VI   146  166              0  154         139        139        154
+  VII  605  659              0  629         583        583        629
+  VIII 340  358              0  336         321        321        336
+  X    412  446              1  428         398        398        428
+  XI   361  385              0  369         348        348        369
+  XII  604  668              0  631         578        578        631
+  XIII 531  573              1  541         504        505        541
+  XIV  454  478              0  455         435        435        455
+  XV   609  647              1  628         596        597        628
+  XVI  537  567              0  536         512        511        536</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## Same result with a 2-column data frame
-<span class="kw">table</span>(featureTable[, <span class="kw">c</span>(<span class="st">&quot;feature&quot;</span>, <span class="st">&quot;seqname&quot;</span>)])</code></pre></div>
-<pre><code>                seqname
-feature            I  II III  IV  IX Mito   V  VI VII VIII   X  XI XII
-  CDS            120 483 192 870 252   59 338 146 605  340 412 361 604
-  exon           129 500 210 907 269   87 367 166 659  358 446 385 668
-  five_prime_utr   0   0   0   0   1    0   0   0   0    0   1   0   0
-  gene           124 472 200 868 258   55 352 154 629  336 428 369 631
-  start_codon    117 458 184 836 241   28 323 139 583  321 398 348 578
-  stop_codon     117 456 184 836 241   28 323 139 583  321 398 348 578
-  transcript     124 472 200 868 258   55 352 154 629  336 428 369 631
-                seqname
-feature          XIII XIV  XV XVI
-  CDS             531 454 609 537
-  exon            573 478 647 567
-  five_prime_utr    1   0   1   0
-  gene            541 455 628 536
-  start_codon     504 435 596 512
-  stop_codon      505 435 597 511
-  transcript      541 455 628 536</code></pre>
+<span class="kw">table</span>(featureTable[, <span class="kw">c</span>(<span class="st">&quot;seqname&quot;</span>, <span class="st">&quot;feature&quot;</span>)])</code></pre></div>
+<pre><code>       feature
+seqname CDS exon five_prime_utr gene start_codon stop_codon transcript
+   I    120  129              0  124         117        117        124
+   II   483  500              0  472         458        456        472
+   III  192  210              0  200         184        184        200
+   IV   870  907              0  868         836        836        868
+   IX   252  269              1  258         241        241        258
+   Mito  59   87              0   55          28         28         55
+   V    338  367              0  352         323        323        352
+   VI   146  166              0  154         139        139        154
+   VII  605  659              0  629         583        583        629
+   VIII 340  358              0  336         321        321        336
+   X    412  446              1  428         398        398        428
+   XI   361  385              0  369         348        348        369
+   XII  604  668              0  631         578        578        631
+   XIII 531  573              1  541         504        505        541
+   XIV  454  478              0  455         435        435        455
+   XV   609  647              1  628         596        597        628
+   XVI  537  567              0  536         512        511        536</code></pre>
 </div>
 <div id="computing-feature-lengths" class="slide section level2">
 <h2>Computing feature lengths</h2>
@@ -371,14 +373,14 @@ genes &lt;-<span class="st"> </span><span class="kw">subset</span>(featureTable,
 <li>Download chromosome sizes (<a href="https://github.com/jvanheld/stats_avec_RStudio_EBA/blob/gh-pages/practicals/gtf_exploration/data/chrom_sizes.tsv">chrom_sizes.tsv</a>)</li>
 </ul>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## Download tab-delimited file with chromosome sizes (unless already there)
-chromsizes.url &lt;-<span class="st"> &quot;https://github.com/jvanheld/stats_avec_RStudio_EBA/blob/gh-pages/practicals/gtf_exploration/data/chrom_sizes.tsv&quot;</span>
-chrom.size.file &lt;-<span class="st"> </span><span class="kw">file.path</span>(workDir, <span class="st">&quot;chrom_sizes.tsv&quot;</span>)
+chromsizes.url &lt;-<span class="st"> &quot;http://jvanheld.github.io/stats_avec_RStudio_EBA/practicals/gtf_exploration/data/Saccharomyces_cerevisiae.R64-1-1.41_chrom_sizes.tsv&quot;</span>
+chrom.size.file &lt;-<span class="st"> </span><span class="kw">file.path</span>(workDir, <span class="st">&quot;Saccharomyces_cerevisiae.R64-1-1.41_chrom_sizes.tsv&quot;</span>)
 
 <span class="cf">if</span> (<span class="kw">file.exists</span>(chrom.size.file)) {
+  <span class="kw">message</span>(<span class="st">&quot;Chromosome size file already there, not downloaded</span><span class="ch">\n\t</span><span class="st">&quot;</span>, chrom.size.file)
 } <span class="cf">else</span> {
-    <span class="kw">download.file</span>(chromsizes.url, <span class="dt">destfile =</span> chrom.size.file)
+  <span class="kw">download.file</span>(chromsizes.url, <span class="dt">destfile =</span> chrom.size.file, <span class="dt">method =</span> <span class="st">&quot;curl&quot;</span>)
 }</code></pre></div>
-<pre><code>NULL</code></pre>
 </div>
 <div id="loading-chromosome-sizes" class="slide section level2">
 <h2>Loading chromosome sizes</h2>
@@ -441,9 +443,15 @@ histData &lt;-<span class="st"> </span><span class="kw">hist</span>(genes<span c
 <div id="gene-length-box-plot" class="slide section level2">
 <h2>Gene length box plot</h2>
 <p>D'autres types de graphiques permettent d'explorer la distribution d'un ensemble des données. En particulier, les boîtes à moustaches (box plots) affichent, pour une série de données, la médiane, l'écart interquartile, un intervalle de confiance et les valeurs aberrantes.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">boxplot</span>(length <span class="op">~</span><span class="st"> </span>seqname, <span class="dt">data =</span> genes, <span class="dt">col=</span><span class="st">&quot;palegreen&quot;</span>, <span class="dt">horizontal=</span><span class="ot">TRUE</span>, <span class="dt">las=</span><span class="dv">1</span>, <span class="dt">xlab=</span><span class="st">&quot;Gene length&quot;</span>, <span class="dt">ylab=</span><span class="st">&quot;Chromosome&quot;</span>)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">boxplot</span>(length <span class="op">~</span><span class="st"> </span>seqname, 
+        <span class="dt">data =</span> genes, 
+        <span class="dt">col =</span> <span class="st">&quot;palegreen&quot;</span>, 
+        <span class="dt">horizontal =</span> <span class="ot">TRUE</span>, 
+        <span class="dt">las =</span> <span class="dv">1</span>, 
+        <span class="dt">xlab =</span> <span class="st">&quot;Gene length&quot;</span>, 
+        <span class="dt">ylab =</span> <span class="st">&quot;Chromosome&quot;</span>)</code></pre></div>
 <div class="figure" style="text-align: center">
-<img src="figures/gnee_length_boxplot-1.png" alt="Boxplot of gene lengths per chromosome" width="70%" />
+<img src="figures/gene_length_boxplot-1.png" alt="Boxplot of gene lengths per chromosome" width="70%" />
 <p class="caption">
 Boxplot of gene lengths per chromosome
 </p>
