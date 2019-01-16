@@ -65,7 +65,7 @@ library(knitr)
 ## Default parameters for displaying the slides
 knitr::opts_chunk$set(
   echo = TRUE, 
-  eval=TRUE, 
+  eval = TRUE, 
   fig.width = 7, 
   fig.height = 5, 
   fig.align = "center", 
@@ -116,19 +116,34 @@ N'hésitez pas à adapter le protocole ci-dessous pour travailler avec votre pro
 
 ## Page d'accueil d'EnsemblGenomes
 
-```{r ensemblgenomes_home_page, out.width="80%", echo="FALSE"}
+<http://ensemblgenomes.org/>
+
+```{r ensemblgenomes_home_page, out.width="80%", echo=FALSE}
 include_graphics(path = "images/ensemblgenomes_home.png")
+```
+
+
+## EnsemblGenomes Bacteria
+
+<http://bacteria.ensembl.org/>
+
+```{r ensemblgenomes_bacteria, out.width="80%", echo=FALSE}
+include_graphics(path = "images/ensemblgenomes_bacteria.png")
 ```
 
 ## EnsemblGenomes Fungi
 
-```{r ensemblgenomes_fungi, out.width="80%", echo="FALSE"}
+<http://fungi.ensembl.org/>
+
+```{r ensemblgenomes_fungi, out.width="80%", echo=FALSE}
 include_graphics(path = "images/ensemblgenomes_fungi.png")
 ```
 
-## EnsemblGenomes Download page
+## EnsemblGenomes Fungi Download page
 
-```{r ensemblgenomes_download, out.width="80%", echo="FALSE"}
+<http://fungi.ensembl.org/info/website/ftp/>
+
+```{r ensemblgenomes_download, out.width="80%", echo=FALSE}
 include_graphics(path = "images/ensemblgenomes_download_yeast.png")
 ```
 
@@ -314,10 +329,10 @@ On peut calculer des tables de contingence en comptant le nombre de combinaisons
 
 ```{r echo=TRUE, eval=TRUE, results=TRUE}
 ##  Table with two vectors
-table(featureTable$feature, featureTable$seqname)
+table(featureTable$seqname, featureTable$feature)
 
 ## Same result with a 2-column data frame
-table(featureTable[, c("feature", "seqname")])
+table(featureTable[, c("seqname", "feature")])
 ```
 
 
@@ -373,8 +388,8 @@ summary(genes$length)
 
 ```{r downlaod_chromosome_sizes}
 ## Download tab-delimited file with chromosome sizes (unless already there)
-chromsizes.url <- "https://github.com/jvanheld/stats_avec_RStudio_EBA/blob/gh-pages/practicals/gtf_exploration/data/chrom_sizes.tsv"
-chrom.size.file <- file.path(workDir, "chrom_sizes.tsv")
+chromsizes.url <- "https://github.com/jvanheld/stats_avec_RStudio_EBA/blob/gh-pages/practicals/gtf_exploration/data/Saccharomyces_cerevisiae.R64-1-1.41_chrom_sizes.tsv"
+chrom.size.file <- file.path(workDir, "Saccharomyces_cerevisiae.R64-1-1.41_chrom_sizes.tsv")
 
 if (file.exists(chrom.size.file)) {
 } else {
