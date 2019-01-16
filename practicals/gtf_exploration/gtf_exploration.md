@@ -1,7 +1,7 @@
 ---
 title: "Exploration d'une table d'annotations génomiques (GTF)"
 author: "Jacques van Helden"
-date: '2018-11-27'
+date: '2019-01-16'
 output:
   slidy_presentation:
     smart: no
@@ -100,28 +100,26 @@ N'hésitez pas à adapter le protocole ci-dessous pour travailler avec votre pro
 
 ## Page d'accueil d'EnsemblGenomes
 
-
-```r
-include_graphics(path = "images/ensemblgenomes_home.png")
-```
+<http://ensemblgenomes.org/>
 
 <img src="images/ensemblgenomes_home.png" width="80%" style="display: block; margin: auto;" />
 
+
+## EnsemblGenomes Bacteria
+
+<http://bacteria.ensembl.org/>
+
+<img src="images/ensemblgenomes_bacteria.png" width="80%" style="display: block; margin: auto;" />
+
 ## EnsemblGenomes Fungi
 
-
-```r
-include_graphics(path = "images/ensemblgenomes_fungi.png")
-```
+<http://fungi.ensembl.org/>
 
 <img src="images/ensemblgenomes_fungi.png" width="80%" style="display: block; margin: auto;" />
 
-## EnsemblGenomes Download page
+## EnsemblGenomes Fungi Download page
 
-
-```r
-include_graphics(path = "images/ensemblgenomes_download_yeast.png")
-```
+<http://fungi.ensembl.org/info/website/ftp/>
 
 <img src="images/ensemblgenomes_download_yeast.png" width="80%" style="display: block; margin: auto;" />
 
@@ -202,12 +200,13 @@ list.files()
 ```
 [1] "data"                                      
 [2] "figures"                                   
-[3] "gtf_exploration.html"                      
-[4] "gtf_exploration.md"                        
-[5] "gtf_exploration.pdf"                       
-[6] "gtf_exploration.Rmd"                       
-[7] "images"                                    
-[8] "Saccharomyces_cerevisiae.R64-1-1.41.gtf.gz"
+[3] "gtf_exploration_files"                     
+[4] "gtf_exploration.html"                      
+[5] "gtf_exploration.md"                        
+[6] "gtf_exploration.pdf"                       
+[7] "gtf_exploration.Rmd"                       
+[8] "images"                                    
+[9] "Saccharomyces_cerevisiae.R64-1-1.41.gtf.gz"
 ```
 
 

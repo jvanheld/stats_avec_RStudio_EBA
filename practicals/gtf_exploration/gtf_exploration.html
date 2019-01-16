@@ -7,7 +7,7 @@
   <meta http-equiv="Content-Style-Type" content="text/css" />
   <meta name="generator" content="pandoc" />
   <meta name="author" content="Jacques van Helden" />
-  <meta name="date" content="2018-11-27" />
+  <meta name="date" content="2019-01-16" />
   <title>Exploration d'une table d'annotations génomiques (GTF)</title>
   <style type="text/css">code{white-space: pre;}</style>
   <style type="text/css">
@@ -63,7 +63,7 @@ code > span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Inf
   <p class="author">
 Jacques van Helden
   </p>
-  <p class="date">2018-11-27</p>
+  <p class="date">2019-01-16</p>
 </div>
 <div id="but-de-ce-tp" class="slide section level2">
 <h2>But de ce TP</h2>
@@ -102,17 +102,22 @@ Jacques van Helden
 </div>
 <div id="page-daccueil-densemblgenomes" class="slide section level2">
 <h2>Page d'accueil d'EnsemblGenomes</h2>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">include_graphics</span>(<span class="dt">path =</span> <span class="st">&quot;images/ensemblgenomes_home.png&quot;</span>)</code></pre></div>
+<p><a href="http://ensemblgenomes.org/" class="uri">http://ensemblgenomes.org/</a></p>
 <p><img src="images/ensemblgenomes_home.png" width="80%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="ensemblgenomes-bacteria" class="slide section level2">
+<h2>EnsemblGenomes Bacteria</h2>
+<p><a href="http://bacteria.ensembl.org/" class="uri">http://bacteria.ensembl.org/</a></p>
+<p><img src="images/ensemblgenomes_bacteria.png" width="80%" style="display: block; margin: auto;" /></p>
 </div>
 <div id="ensemblgenomes-fungi" class="slide section level2">
 <h2>EnsemblGenomes Fungi</h2>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">include_graphics</span>(<span class="dt">path =</span> <span class="st">&quot;images/ensemblgenomes_fungi.png&quot;</span>)</code></pre></div>
+<p><a href="http://fungi.ensembl.org/" class="uri">http://fungi.ensembl.org/</a></p>
 <p><img src="images/ensemblgenomes_fungi.png" width="80%" style="display: block; margin: auto;" /></p>
 </div>
-<div id="ensemblgenomes-download-page" class="slide section level2">
-<h2>EnsemblGenomes Download page</h2>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">include_graphics</span>(<span class="dt">path =</span> <span class="st">&quot;images/ensemblgenomes_download_yeast.png&quot;</span>)</code></pre></div>
+<div id="ensemblgenomes-fungi-download-page" class="slide section level2">
+<h2>EnsemblGenomes Fungi Download page</h2>
+<p><a href="http://fungi.ensembl.org/info/website/ftp/" class="uri">http://fungi.ensembl.org/info/website/ftp/</a></p>
 <p><img src="images/ensemblgenomes_download_yeast.png" width="80%" style="display: block; margin: auto;" /></p>
 </div>
 <div id="le-chemin-de-la-maison-automatique" class="slide section level2">
@@ -168,12 +173,13 @@ gtf.url &lt;-<span class="st"> </span><span class="kw">file.path</span>(<span cl
 <span class="kw">list.files</span>()</code></pre></div>
 <pre><code>[1] &quot;data&quot;                                      
 [2] &quot;figures&quot;                                   
-[3] &quot;gtf_exploration.html&quot;                      
-[4] &quot;gtf_exploration.md&quot;                        
-[5] &quot;gtf_exploration.pdf&quot;                       
-[6] &quot;gtf_exploration.Rmd&quot;                       
-[7] &quot;images&quot;                                    
-[8] &quot;Saccharomyces_cerevisiae.R64-1-1.41.gtf.gz&quot;</code></pre>
+[3] &quot;gtf_exploration_files&quot;                     
+[4] &quot;gtf_exploration.html&quot;                      
+[5] &quot;gtf_exploration.md&quot;                        
+[6] &quot;gtf_exploration.pdf&quot;                       
+[7] &quot;gtf_exploration.Rmd&quot;                       
+[8] &quot;images&quot;                                    
+[9] &quot;Saccharomyces_cerevisiae.R64-1-1.41.gtf.gz&quot;</code></pre>
 </div>
 <div id="loading-a-data-table-in-r" class="slide section level2">
 <h2>Loading a data table in R</h2>
